@@ -1,0 +1,5 @@
+# Chart dependencies
+**/charts/*.tgz
+
+# Helm dependencies lock file
+Chart.lock
