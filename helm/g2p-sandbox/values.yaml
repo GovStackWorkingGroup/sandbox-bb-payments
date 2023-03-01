@@ -191,7 +191,7 @@ ph-ee-engine:
 
   ph_ee_connector_ams_mifos:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/ph-ee-ams"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-ee-ams"
     imageTag: latest
     imagePullPolicy: "Always"
     SPRING_PROFILES_ACTIVE: "fin12,bb"
@@ -212,7 +212,8 @@ ph-ee-engine:
 
   ph_ee_connector_mojaloop:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-mojaloop"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-mojaloop"
+    imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
     hostname: "mojaloop.mifos.g2pconnect.io"
     DFSPIDS: "gorilla,lion"
@@ -257,7 +258,7 @@ ph-ee-engine:
 
   channel:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-channel"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-channel"
     imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
     hostname: "channel.mifos.g2pconnect.io"
@@ -291,7 +292,7 @@ ph-ee-engine:
 
   operations_app:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/ph-ee-ops-bk"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-ee-ops-bk"
     imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
     tenants: "rhino,gorilla"
@@ -324,7 +325,7 @@ ph-ee-engine:
 
   operations_web:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-ops-web"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-ops-web"
     imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
     hostname: "ops.mifos.g2pconnect.io"
@@ -351,7 +352,7 @@ ph-ee-engine:
 
   ph_ee_connector_gsma:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-gsma"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-gsma"
     imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
     limits:
@@ -366,7 +367,7 @@ ph-ee-engine:
 
   ph_ee_connector_slcb:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/ph-ee-slcb"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-ee-slcb"
     imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
     deployment:
@@ -375,7 +376,7 @@ ph-ee-engine:
 
   mpesa:
     enabled: false
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/ph-mpesa"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-mpesa"
     imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
     hostname: "mpesa.mifos.g2pconnect.io"
@@ -427,7 +428,7 @@ ph-ee-engine:
 
   roster_connector:
     enabled: false
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-roster"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-roster"
     imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
     ams:
@@ -447,7 +448,7 @@ ph-ee-engine:
 
   paygops_connector:
     enabled: false
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-connector-ams-paygops"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-connector-ams-paygops"
     imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
     LOGGING_LEVEL_ROOT: "INFO"
@@ -469,7 +470,7 @@ ph-ee-engine:
 
   notifications:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/ph-ee-notifications"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-ee-notifications"
     imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
     hostname: "notifications.mifos.g2pconnect.io"
@@ -503,7 +504,7 @@ ph-ee-engine:
 
   connector_bulk:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-bulk-processor"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-bulk-processor"
     SPRING_PROFILES_ACTIVE: "bb"
     imageTag: latest
     tenant: "rhino,gorilla"
@@ -524,7 +525,7 @@ ph-ee-engine:
         
   zeebe_ops:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-zeebe-ops"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-zeebe-ops"
     imageTag: latest
     hostname: "zeebeops.mifos.g2pconnect.io"
     zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
@@ -554,7 +555,7 @@ ph-ee-engine:
 
   messagegateway:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-message-gateway"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-message-gateway"
     imageTag: latest
     secret:
       value:
@@ -586,7 +587,7 @@ ph-ee-engine:
             number: 80
 
   importer_es:
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/ph-es-importer"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-es-importer"
     imageTag: latest
     elasticsearch_sslverification: false
     elasticsearch_security_enabled: false
@@ -627,7 +628,7 @@ ph-ee-engine:
 
   importer_rdbms:
     enabled: true
-    image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-importer-rdbms"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-importer-rdbms"
     imageTag: latest
     LOGGING_LEVEL_ROOT: "DEBUG"
     limits:
