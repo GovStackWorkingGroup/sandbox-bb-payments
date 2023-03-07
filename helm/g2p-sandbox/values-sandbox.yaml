@@ -1,0 +1,53 @@
+ph-ee-engine:
+  kibana:
+    protocol: https
+
+  ph_ee_connector_ams_mifos:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-ee-ams"
+
+  ph_ee_connector_mojaloop:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-mojaloop"
+    imageTag: latest
+
+  channel:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-channel"
+
+  operations_app:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-ee-ops-bk"
+
+  operations_web:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-ops-web"
+
+  ph_ee_connector_gsma:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-gsma"
+
+  ph_ee_connector_slcb:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-ee-slcb"
+
+  mpesa:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-mpesa"
+
+  roster_connector:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-roster"
+
+  paygops_connector:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-connector-ams-paygops"
+
+  notifications:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-ee-notifications"
+
+  connector_bulk:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-bulk-processor"
+        
+  zeebe_ops:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-zeebe-ops"
+
+  messagegateway:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-message-gateway"
+
+  importer_es:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-es-importer"
+
+  importer_rdbms:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-importer-rdbms"
+
