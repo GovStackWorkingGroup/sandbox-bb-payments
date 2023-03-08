@@ -51,3 +51,10 @@ ph-ee-engine:
   importer_rdbms:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-importer-rdbms"
 
+fin-engine:
+  namespace: "paymenthub"
+  fineract:
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-fineract:mysqllatest"
+
+  communityapp:
+    image: 463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-community-app:latest
