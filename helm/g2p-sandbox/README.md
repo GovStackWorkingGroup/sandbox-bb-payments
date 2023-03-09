@@ -2,7 +2,7 @@ Helm Upgrade command ---->
 helm upgrade -f helm/g2p-sandbox/values.yaml g2pconnect helm/g2p-sandbox --install --create-namespace --namespace paymenthub
 
 Helm Upgrade command for Govstack sandbox ---->
-helm upgrade -f helm/g2p-sandbox/values.yaml -f helm/g2p-sandbox/values-sandbox.yaml g2pconnect helm/g2p-sandbox --install --create-namespace --namespace paymenthub
+helm upgrade -f helm/g2p-sandbox/values.yaml -f helm/g2p-sandbox/values-sandbox.yaml --set fin-engine.namespace=paymenthub g2pconnect helm/g2p-sandbox --install --create-namespace --namespace paymenthub
 
 Known Issue 
 Migration script race condition Operation app startup issue work around
