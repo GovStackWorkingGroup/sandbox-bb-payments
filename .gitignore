@@ -3,3 +3,6 @@
 
 # Helm dependencies lock file
 Chart.lock
+
+# Mac files exclusion
+**/.DS_Store
