@@ -4,10 +4,10 @@ helm upgrade -f helm/g2p-sandbox/values.yaml g2pconnect helm/g2p-sandbox --insta
 #Helm Upgrade command for Govstack sandbox ---->
 helm upgrade -f helm/g2p-sandbox/values.yaml -f helm/g2p-sandbox/values-sandbox.yaml --set fin-engine.namespace=paymenthub g2pconnect helm/g2p-sandbox --install --create-namespace --namespace paymenthub
 
-#Uninstall chart
+#Uninstall chart ---->
 helm uninstall g2pconnect --namespace paymenthub
 
-#helm dependency update
+#helm dependency update ---->
 helm dependency update helm/g2p-sandbox
 
 Known Issue 
@@ -16,6 +16,10 @@ Migration script race condition Operation app startup issue work around
 2. connect the mysql with root passwrod 
 3. delete tenants 
 4. Run the SQL scripts which didn’t run successfully
+
+DROP DATABASE `tenants`;
+DROP DATABASE `rhino`;
+DROP DATABASE `gorilla`;
 
 CREATE DATABASE `tenants`;
 GRANT ALL PRIVILEGES ON `tenants`.* TO 'mifos';
