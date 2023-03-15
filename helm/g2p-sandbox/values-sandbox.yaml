@@ -22,6 +22,12 @@ ph-ee-engine:
 
   channel:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-channel"
+    limits:
+      cpu: "500m"
+      memory: "1024M"
+    requests:
+      cpu: "100m"
+      memory: "512M"
 
   operations_app:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-ee-ops-bk"
