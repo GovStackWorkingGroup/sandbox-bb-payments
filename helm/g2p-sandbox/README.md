@@ -7,6 +7,9 @@ helm upgrade -f helm/g2p-sandbox/values.yaml -f helm/g2p-sandbox/values-sandbox.
 #Uninstall chart ---->
 helm uninstall g2pconnect --namespace paymenthub
 
+Delete all related Persistent Volume Claims  ---->
+kubectl delete pvc data-fineract-mysql-0 data-operationsmysql-0 data-zeebe-zeebe-0 ph-ee-elasticsearch-ph-ee-elasticsearch-0 -n paymenthub
+
 #helm dependency update ---->
 helm dependency update helm/g2p-sandbox
 
