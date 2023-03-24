@@ -20,6 +20,10 @@ ph-ee-engine:
   ph_ee_connector_mojaloop:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-mojaloop"
     imageTag: latest
+    switch:
+      transfers:
+        host: ""
+        service: ""
 
   channel:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-channel"
@@ -57,6 +61,7 @@ ph-ee-engine:
 
   connector_bulk:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-bulk-processor"
+    tenants: "rhino,gorilla"
         
   zeebe_ops:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-zeebe-ops"
