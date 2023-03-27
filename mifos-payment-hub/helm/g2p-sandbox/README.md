@@ -1,4 +1,4 @@
-# Installation instructions PaymenHubEE and Fineract
+# Installation instructions PaymentHubEE and Fineract
 
 ## Install chart
 
