@@ -1,7 +1,4 @@
-#Helm Upgrade command ---->
-helm upgrade -f helm/g2p-sandbox/values.yaml g2pconnect helm/g2p-sandbox --install --create-namespace --namespace paymenthub
-
-# Installation instructions
+# Installation instructions PaymenHubEE and Fineract
 
 ## Install chart
 
@@ -34,8 +31,8 @@ Migration script race condition Operation app startup issue work around
 
 ### Solution
 
-1. port forward ops-mysql -3307
-2. connect the mysql with root passwrod 
+1. port forward ops-mysql(pod: "operationsmysql") -3307
+2. connect the mysql with root password 
 3. delete tenants 
 4. Run the SQL scripts which didn’t run successfully
 
@@ -52,7 +49,7 @@ Migration script race condition Operation app startup issue work around
     GRANT ALL PRIVILEGES ON `gorilla`.* TO 'mifos';
     GRANT ALL ON *.* TO 'root'@'%';
 ```
-5. restart ops-app pod
+5. restart ops-app (pod: "ph-ee-operations-app")
 
 ## Known Issue Fineract
 
@@ -60,9 +57,11 @@ There is race condition with migrations runned in fineract-server pod. When migr
 
 ### Solution
 
-Restart fineract-server, than check that database "gorilla" in fineract-mysql is populated.
+Restart fineract-server pod, then check that database "gorilla" in fineract-mysql pod is populated.
 
 ## ElasticSearch secrets
+
+Source documentation provied from Mifos: [INFO](https://docs.google.com/document/d/1Pk4fHdAONAwZ9j65YuI8qA8MgDmv_oMnlvqNUQGsMTA/edit)
 
 ```
     // Curent elasticsearch version 7.16.3
