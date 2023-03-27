@@ -1,16 +1,16 @@
 # Installation instructions PaymentHubEE and Fineract
 
-Fineract: [Description](https://fineract.apache.org/)
+## Fineract: [Description](https://fineract.apache.org/)
 
-    Will be used as Financial Service Provider (FSP) 
+  Will be used as Financial Service Provider (FSP) 
 
-    Source Repo: [Repo](https://github.com/fynarfin/fineract-env/blob/master/helm/g2p-Sandbox/values.yaml)
+  Source Repo: [Repo](https://github.com/fynarfin/fineract-env/blob/master/helm/g2p-Sandbox/values.yaml)
 
-PaymentHubEE: [Description](https://payments.mifos.org/)
+## PaymentHubEE: [Description](https://payments.mifos.org/)
 
-    Will be used as payment orchestration API
+  Will be used as payment orchestration API
 
-    Source Repo: [Repo](https://github.com/openMF/ph-ee-env-labs/tree/master/helm/g2p-sandbox)
+  Source Repo: [Repo](https://github.com/openMF/ph-ee-env-labs/tree/master/helm/g2p-sandbox)
 
 ## Install chart
 
