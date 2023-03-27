@@ -1,5 +1,17 @@
 # Installation instructions PaymentHubEE and Fineract
 
+Fineract: [Description](https://fineract.apache.org/)
+
+    Will be used as Financial Service Provider (FSP) 
+
+    Source Repo: [Repo](https://github.com/fynarfin/fineract-env/blob/master/helm/g2p-Sandbox/values.yaml)
+
+PaymentHubEE: [Description](https://payments.mifos.org/)
+
+    Will be used as payment orchestration API
+
+    Source Repo: [Repo](https://github.com/openMF/ph-ee-env-labs/tree/master/helm/g2p-sandbox)
+
 ## Install chart
 
 Helm dependency update
@@ -11,6 +23,12 @@ Helm Upgrade command for Govstack sandbox
 ```
     helm upgrade -f helm/g2p-sandbox/values.yaml -f helm/g2p-sandbox/values-sandbox.yaml --set fin-engine.namespace=paymenthub g2pconnect helm/g2p-sandbox --install --create-namespace --namespace paymenthub
 ```
+
+NOTE: If different namespace is used should be changed in " helm/g2p-sandbox/values-sandbox.yaml" for hosts related with "ph_ee_connector_ams_mifos"
+
+Example: 
+    https://fineract-server-local.paymenthub.svc.cluster.local/ ->
+    https://fineract-server-local.namespace.svc.cluster.local/
 
 ## Uninstall chart
 
