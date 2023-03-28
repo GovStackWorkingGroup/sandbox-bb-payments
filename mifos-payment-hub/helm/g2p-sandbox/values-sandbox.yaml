@@ -62,6 +62,8 @@ ph-ee-engine:
   connector_bulk:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-bulk-processor"
     tenants: "rhino,gorilla"
+    operations_app:
+      contactpoint: "ph-ee-operations-app"
         
   zeebe_ops:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-zeebe-ops"
