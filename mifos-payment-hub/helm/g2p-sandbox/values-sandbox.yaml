@@ -6,10 +6,10 @@ ph-ee-engine:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-ph-ee-ams"
     dfspids: "gorilla,rhino"
     ams_local_enabled: true
-    ams_local_interop_host: "https://fineract-server-local.paymenthub.svc.cluster.local/"
-    ams_local_account_host: "https://fineract-server-local.paymenthub.svc.cluster.local/"
-    ams_local_customer_host: "https://fineract-server-local.paymenthub.svc.cluster.local/"
-    ams_local_auth_host: "https://fineract-server-local.paymenthub.svc.cluster.local/"
+    ams_local_interop_host: "https://fineract-server-local/"
+    ams_local_account_host: "https://fineract-server-local/"
+    ams_local_customer_host: "https://fineract-server-local/"
+    ams_local_auth_host: "https://fineract-server-local/"
     limits:
       cpu: "500m"
       memory: "1024M"
@@ -18,6 +18,7 @@ ph-ee-engine:
       memory: "512M"
 
   ph_ee_connector_mojaloop:
+    enabled: false
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-mojaloop"
     imageTag: latest
     switch:
