@@ -65,10 +65,10 @@ jobs:
               kubectl scale deployment ph-ee-operations-app --replicas=$REPLICAS -n ${CHART_NAMESPACE}
             }
             fix_ops_db
-            if ! kubectl wait deployment -n ${CHART_NAMESPACE} ph-ee-operations-app --for condition=Available=True --timeout=90s; then
+            if ! kubectl wait deployment -n ${CHART_NAMESPACE} ph-ee-operations-app --for condition=Available=True --timeout=180s; then
               echo "Retry Fix Operation app DATABASE"
               fix_ops_db
-              kubectl wait deployment -n ${CHART_NAMESPACE} ph-ee-operations-app --for condition=Available=True --timeout=90s
+              kubectl wait deployment -n ${CHART_NAMESPACE} ph-ee-operations-app --for condition=Available=True --timeout=180s
             fi
       - run:
           name: Migrating Tenants
