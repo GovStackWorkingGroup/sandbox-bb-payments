@@ -52,16 +52,24 @@ jobs:
       - run:
           name: Fix Operation app DATABASE
           command: |
-            REPLICAS=$(kubectl describe deployments ph-ee-operations-app -n ${CHART_NAMESPACE} | grep desired | awk '{print $2}')
-            kubectl scale deployment ph-ee-operations-app --replicas=0 -n ${CHART_NAMESPACE}
             sudo apt-get update
             sudo apt-get install -y mysql-client
-            root_pass=$(kubectl get secret operationsmysql -o jsonpath='{.data.mysql-root-password}' -n ${CHART_NAMESPACE} | base64 --decode)
-            kubectl rollout status --watch --timeout=180s statefulset/operationsmysql -n ${CHART_NAMESPACE} 
-            sleep 60
-            kubectl -n ${CHART_NAMESPACE} port-forward service/operationsmysql 15300:3306 & sleep 5
-            mysql -h 127.0.0.1 -P 15300 -u root -p$root_pass --execute="DROP DATABASE tenants;DROP DATABASE rhino;DROP DATABASE gorilla;CREATE DATABASE tenants;GRANT ALL PRIVILEGES ON tenants.* TO 'mifos';CREATE DATABASE rhino;CREATE DATABASE gorilla;GRANT ALL PRIVILEGES ON rhino.* TO 'mifos';GRANT ALL PRIVILEGES ON gorilla.* TO 'mifos';GRANT ALL ON *.* TO 'root'@'%';" -vvv
-            kubectl scale deployment ph-ee-operations-app --replicas=$REPLICAS -n ${CHART_NAMESPACE}
+            fix_ops_db() {
+              REPLICAS=$(kubectl describe deployments ph-ee-operations-app -n ${CHART_NAMESPACE} | grep desired | awk '{print $2}')
+              kubectl scale deployment ph-ee-operations-app --replicas=0 -n ${CHART_NAMESPACE}
+              root_pass=$(kubectl get secret operationsmysql -o jsonpath='{.data.mysql-root-password}' -n ${CHART_NAMESPACE} | base64 --decode)
+              kubectl rollout status --watch --timeout=180s statefulset/operationsmysql -n ${CHART_NAMESPACE} 
+              sleep 60
+              kubectl -n ${CHART_NAMESPACE} port-forward service/operationsmysql 15300:3306 & sleep 5
+              mysql -h 127.0.0.1 -P 15300 -u root -p$root_pass --execute="DROP DATABASE tenants;DROP DATABASE rhino;DROP DATABASE gorilla;CREATE DATABASE tenants;GRANT ALL PRIVILEGES ON tenants.* TO 'mifos';CREATE DATABASE rhino;CREATE DATABASE gorilla;GRANT ALL PRIVILEGES ON rhino.* TO 'mifos';GRANT ALL PRIVILEGES ON gorilla.* TO 'mifos';GRANT ALL ON *.* TO 'root'@'%';" -vvv
+              kubectl scale deployment ph-ee-operations-app --replicas=$REPLICAS -n ${CHART_NAMESPACE}
+            }
+            fix_ops_db
+            if ! kubectl wait deployment -n ${CHART_NAMESPACE} ph-ee-operations-app --for condition=Available=True --timeout=90s; then
+              echo "Retry Fix Operation app DATABASE"
+              fix_ops_db
+              kubectl wait deployment -n ${CHART_NAMESPACE} ph-ee-operations-app --for condition=Available=True --timeout=90s
+            fi
       - run:
           name: Migrating Tenants
           command: |
