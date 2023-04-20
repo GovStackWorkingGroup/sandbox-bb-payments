@@ -104,3 +104,12 @@ Source documentation provied from Mifos: [INFO](https://docs.google.com/document
     kubectl create secret generic elastic-certificate-pem --from-file=elastic-certificate.pem --namespace paymenthub
     kubectl create secret generic elastic-certificate-crt --from-file=elastic-certificate.crt --namespace paymenthub
 ```
+## X-Road connection 
+
+Port forward
+* `kubectl port-forward service/govstack-xroad-ssp 8000:4000 -n govstack`
+* `kubectl port-forward service/govstack-xroad-ssc 7000:4000 -n govstack`
+
+Services endpoints
+* Fineract server: `https://fineract-server.paymenthub.svc.cluster.local:8443`
+* Payment Hub Operations App: `http://ph-ee-operations-app.paymenthub.svc.cluster.local`
