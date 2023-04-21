@@ -14,15 +14,15 @@ jobs:
       - setup_remote_docker:
           version: 20.10.14
       - aws-cli/setup:
-          role-arn: 'arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev'
+          role-arn: 'arn:aws:iam::463471358064:role/CircleCIRole'
           aws-region: AWS_DEFAULT_REGION
-          profile-name: CICDPipeline_sandbox-bb-payments_Role_dev
+          profile-name: CircleCIRole
           role-session-name: CircleSession
           session-duration: '1800'
       - aws-eks/update-kubeconfig-with-authenticator:
           aws-region: "${AWS_DEFAULT_REGION}"
           cluster-name: "${AWS_CLUSTER_NAME}"
-          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev
+          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/CircleCIRole
       - helm/install-helm-client:
           version: v3.2.0
       - run:
