@@ -42,6 +42,11 @@ Delete all related Persistent Volume Claims
     kubectl delete pvc data-fineract-mysql-0 data-operationsmysql-0 data-zeebe-zeebe-0 ph-ee-elasticsearch-ph-ee-elasticsearch-0 -n paymenthub
 ```
 
+Delete Elasticsearch secrets
+```
+kubectl delete secrets elastic-certificates elastic-certificate-pem elastic-certificate-crt -n paymenthub
+```
+
 
 
 ## Known Issue Payment hub EE:
@@ -165,3 +170,14 @@ Source documentation provied from Mifos: [INFO](https://docs.google.com/document
     --header 'X-Road-Client: DEV/GOV/111/CONSUMER' \
     --header 'Platform-TenantId: gorilla'
 ```
+
+## To run Circle CI Deploy Workflow:
+
+To run "Deloy PaymentHub and Fineract to EKS cluster" workflow, pipeline parameter "deploy_allowed" of type Boolean should be set to "true"
+
+Example:
+1. navigate to project in CircleCI
+2. select branch from the dropdown
+3. select "Trigger pipline" action
+4. Add paramether of type "Boolean", named "deploy_allowed" and set value to "true"
+5. Then trigger the pipeline
