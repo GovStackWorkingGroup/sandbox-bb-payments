@@ -6,3 +6,4 @@
 ## Candidates
 
 ### Mifos
+[Documentation](./mifos-payment-hub/docs/1-main.md)

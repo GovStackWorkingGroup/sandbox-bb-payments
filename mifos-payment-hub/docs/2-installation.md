@@ -1,7 +1,4 @@
-# Mifos - PaymentHubEE and Fineract
-
-## Working directory
->./mifos-payment-hub/
+# Installation
 
 ## Install chart
 

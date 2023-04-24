@@ -1,4 +1,4 @@
-# Mifos - PaymentHubEE and Fineract
+# Connectivity
 
 ## X-Road connection 
 

@@ -1,4 +1,4 @@
-# Mifos - PaymentHubEE and Fineract
+# CI/CD instructions
 
 ## To run Circle CI Deploy Workflow:
 
