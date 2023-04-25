@@ -6,4 +6,4 @@
 ## Candidates
 
 ### Mifos
-[Documentation](./mifos-payment-hub/docs/1-main.md)
+[Documentation](https://vladi-1.gitbook.io/paymenthub/)
