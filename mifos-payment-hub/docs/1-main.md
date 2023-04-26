@@ -3,7 +3,7 @@
 ## Fineract 
 [Description](https://fineract.apache.org/)
 
-Will be used as Financial Service Provider (FSP) 
+Will be used as Account management system (AMS) 
 
 Source Repo: [Repository](https://github.com/fynarfin/fineract-env/blob/master/helm/g2p-Sandbox/values.yaml)  
 Base Helm Chart: [Repository](https://github.com/fynarfin/fineract-env/blob/master/helm/fineract/values.yaml)  
