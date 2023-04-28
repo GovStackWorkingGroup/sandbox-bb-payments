@@ -108,7 +108,8 @@ jobs:
           command: |
             echo "Validate deployments"
             kubectl wait deployment -n ${CHART_NAMESPACE} ph-ee-operations-app --for condition=Available=True --timeout=180s
-
+            echo "Validate statefulsets"
+            kubectl rollout status --watch --timeout=180s statefulset/operationsmysql -n ${CHART_NAMESPACE}
 parameters:
   deploy_allowed:
     type: boolean
