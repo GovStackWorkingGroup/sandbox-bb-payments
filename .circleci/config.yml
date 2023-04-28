@@ -86,6 +86,29 @@ jobs:
               curl --location 'http://127.0.0.1:15200/zeebe/upload' --form "file=@$bpmn"
             done
             ps -ef | grep port-forward | grep -v grep | awk '{print $2}' | xargs kill -9
+  test-deployed-payment-hub-and-fineract:
+    docker:
+      - image: cimg/aws:2023.03
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+      - aws-cli/setup:
+          role-arn: 'arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev'
+          aws-region: AWS_DEFAULT_REGION
+          profile-name: CICDPipeline_sandbox-bb-payments_Role_dev
+          role-session-name: CircleSession
+          session-duration: '1800'
+      - aws-eks/update-kubeconfig-with-authenticator:
+          aws-region: "${AWS_DEFAULT_REGION}"
+          cluster-name: "${AWS_CLUSTER_NAME}"
+          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev
+      - helm/install-helm-client:
+          version: v3.2.0
+      - run:
+          name: Validate deployments
+          command: |
+            kubectl wait deployment -n ${CHART_NAMESPACE} ph-ee-operations-app --for condition=Available=True --timeout=180s
 
 parameters:
   deploy_allowed:
@@ -102,3 +125,8 @@ workflows:
           context: aws
           requires:
             - hold
+      - test-deployed-payment-hub-and-fineract:
+          context: aws
+          requires:
+            - deploy-payment-hub-and-fineract
+
