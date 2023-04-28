@@ -91,8 +91,6 @@ jobs:
       - image: cimg/aws:2023.03
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.14
       - aws-cli/setup:
           role-arn: 'arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev'
           aws-region: AWS_DEFAULT_REGION
@@ -108,6 +106,7 @@ jobs:
       - run:
           name: Validate deployments
           command: |
+            echo "Validate deployments"
             kubectl wait deployment -n ${CHART_NAMESPACE} ph-ee-operations-app --for condition=Available=True --timeout=180s
 
 parameters:
