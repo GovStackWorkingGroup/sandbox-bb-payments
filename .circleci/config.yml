@@ -108,6 +108,7 @@ jobs:
           command: |
             echo "Validate deployments"
             kubectl rollout status --watch --timeout=60s deployment/ph-ee-operations-app -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/fineract-server -n ${CHART_NAMESPACE}
             echo "Validate statefulsets"
             kubectl rollout status --watch --timeout=60s statefulset/operationsmysql -n ${CHART_NAMESPACE}
       - run:
