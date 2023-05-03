@@ -125,8 +125,20 @@ parameters:
   deploy_allowed:
     type: boolean
     default: false
+  test_allowed:
+    type: boolean
+    default: false
 
 workflows:
+  Test Deployment:
+    when: << pipeline.parameters.test_allowed >>
+    jobs:
+      - hold:
+          type: approval
+      - test-deployed-payment-hub-and-fineract:
+          context: aws
+          requires:
+            - hold
   Deloy PaymentHub and Fineract to EKS cluster:
     when: << pipeline.parameters.deploy_allowed >>
     jobs:
