@@ -118,7 +118,7 @@ jobs:
             fineract_server_response=$(curl -w " %{http_code}" --location 'https://127.0.0.1:15200/fineract-provider/actuator/health' -k)
             fineract_server_response_code=$(echo $fineract_server_response | awk '{print $2}')
             fineract_server_response_body=$(echo $fineract_server_response | awk '{print $1}')
-            if [ "$fineract_server_response_code" != "201" ] || [ "$fineract_server_response_body" != "{\"status\":\"UP\",\"groups\":[\"liveness\",\"readiness\"]}" ]; then
+            if [ "$fineract_server_response_code" != "200" ] || [ "$fineract_server_response_body" != "{\"statuss\":\"UP\",\"groups\":[\"liveness\",\"readiness\"]}" ]; then
               echo "Fineract Server Endpoint test failed!"
               exit 1
             fi
