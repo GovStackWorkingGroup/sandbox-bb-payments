@@ -102,6 +102,10 @@ jobs:
           cluster-name: "${AWS_CLUSTER_NAME}"
           cluster-authentication-role-arn: arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev
       - run:
+          name: Wait Before Tests
+          command: |
+            sleep 60
+      - run:
           name: Validate deployments
           command: |
             echo "Validate deployments"
