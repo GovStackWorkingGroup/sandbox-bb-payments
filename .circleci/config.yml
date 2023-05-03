@@ -113,7 +113,7 @@ jobs:
       - run:
           name: Validate Api Endpoints
           command: |
-            kubectl -n ${CHART_NAMESPACE} port-forward service/fineract-server 15200:443 & sleep 5
+            kubectl -n ${CHART_NAMESPACE} port-forward service/fineract-server 15200:8443 & sleep 5
             fineract_server_response=$(curl -w "\n%{http_code}" --location 'https://127.0.0.1:15200/fineract-provider/actuator/health' -k)
             fineract_server_response_code=$(echo $fineract_server_response | sed -n 2p)
             fineract_server_response_body=$(echo $fineract_server_response | sed -n 1p)
