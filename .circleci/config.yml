@@ -54,6 +54,7 @@ jobs:
           command: |
             REPLICAS=$(kubectl describe deployments ph-ee-operations-app -n ${CHART_NAMESPACE} | grep desired | awk '{print $2}')
             kubectl scale deployment ph-ee-operations-app --replicas=0 -n ${CHART_NAMESPACE}
+            sudo apt-get clean
             sudo apt-get update
             sudo apt-get install -y mysql-client
             root_pass=$(kubectl get secret operationsmysql -o jsonpath='{.data.mysql-root-password}' -n ${CHART_NAMESPACE} | base64 --decode)
