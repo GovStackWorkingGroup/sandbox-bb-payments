@@ -113,6 +113,8 @@ jobs:
           name: Validate Api Endpoints
           command: |
             echo "Validate Fineract Server Endpoint"
+            kubectl wait deployment -n ${CHART_NAMESPACE} fineract-server --for condition=Available=True --timeout=180s
+            sleep 60
             kubectl -n ${CHART_NAMESPACE} port-forward service/fineract-server 15100:8443 & sleep 5
             fineract_server_response=$(curl -w " %{http_code}" --location 'https://127.0.0.1:15100/fineract-provider/actuator/health' -k)
             fineract_server_response_code=$(echo $fineract_server_response | awk '{print $2}')
