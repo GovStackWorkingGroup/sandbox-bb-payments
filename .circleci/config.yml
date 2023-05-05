@@ -108,6 +108,13 @@ jobs:
             echo "Validate statefulsets"
             kubectl rollout status --watch --timeout=60s statefulset/operationsmysql -n ${CHART_NAMESPACE}
       - run:
+          name: Update curl
+          command: |
+            curl -V
+            sudo apt-get update
+            sudo apt-get install curl
+            curl -V
+      - run:
           name: Validate Api Endpoints
           command: |
             echo "Validate Fineract Server Endpoint"
