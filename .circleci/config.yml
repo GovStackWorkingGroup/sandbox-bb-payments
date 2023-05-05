@@ -107,7 +107,19 @@ jobs:
             echo "Validate statefulsets"
             kubectl rollout status --watch --timeout=60s statefulset/operationsmysql -n ${CHART_NAMESPACE}
       - run:
-          name: Validate Api Endpoints
+          name: Validate Operations APP Api Endpoint
+          command: |
+            echo "Validate Operations APP Endpoint"
+            kubectl -n ${CHART_NAMESPACE} port-forward service/ph-ee-operations-app 15000:80 & sleep 5
+            op_app_response=$(curl -w " %{http_code}" --location 'http://127.0.0.1:15000/oauth/token_key')
+            op_app_response_code=$(echo $op_app_response | awk '{print $2}')
+            if [ "$op_app_response_code" != "200" ]; then
+              echo "Operations APP Endpoint test failed!"
+              exit 1
+            fi
+            pkill kubectl
+      - run:
+          name: Validate Fineract Server Api Endpoint
           command: |
             echo "Validate Fineract Server Endpoint"
             kubectl wait deployment -n ${CHART_NAMESPACE} fineract-server --for condition=Available=True --timeout=180s
@@ -122,6 +134,7 @@ jobs:
               echo "Fineract Server Endpoint test failed!"
               exit 1
             fi
+            pkill kubectl
             
 parameters:
   deploy_allowed:
