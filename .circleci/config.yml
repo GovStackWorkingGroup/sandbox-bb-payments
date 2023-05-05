@@ -83,10 +83,9 @@ jobs:
               curl --location 'http://127.0.0.1:15200/zeebe/upload' --form "file=@$bpmn"
             done
             pkill kubectl
-            sleep 30
   test-deployed-payment-hub-and-fineract:
     docker:
-      - image: cimg/aws:2023.03
+      - image: cimg/aws:2023.05
     steps:
       - checkout
       - aws-cli/setup:
@@ -108,13 +107,6 @@ jobs:
             echo "Validate statefulsets"
             kubectl rollout status --watch --timeout=60s statefulset/operationsmysql -n ${CHART_NAMESPACE}
       - run:
-          name: Update curl
-          command: |
-            curl -V
-            sudo apt-get update
-            sudo apt-get install curl
-            curl -V
-      - run:
           name: Validate Api Endpoints
           command: |
             echo "Validate Fineract Server Endpoint"
@@ -123,7 +115,7 @@ jobs:
             kubectl -n ${CHART_NAMESPACE} port-forward pod/$pod_name 15100:8443 & sleep 5
             sleep 30
             echo "Testing Fineract Server Endpoint"
-            fineract_server_response=$(curl -w " %{http_code}" --location 'https://127.0.0.1:15100/fineract-provider/actuator/health' -k)
+            fineract_server_response=$(curl -w " %{http_code}" --location 'https://localhost:15100/fineract-provider/actuator/health' -k)
             fineract_server_response_code=$(echo $fineract_server_response | awk '{print $2}')
             fineract_server_response_body=$(echo $fineract_server_response | awk '{print $1}')
             if [ "$fineract_server_response_code" != "200" ] || [ "$fineract_server_response_body" != "{\"status\":\"UP\",\"groups\":[\"liveness\",\"readiness\"]}" ]; then
