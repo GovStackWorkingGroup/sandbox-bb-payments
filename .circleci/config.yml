@@ -57,7 +57,6 @@ jobs:
             root_pass=$(kubectl get secret operationsmysql -o jsonpath='{.data.mysql-root-password}' -n ${CHART_NAMESPACE} | base64 --decode)
             kubectl rollout status --watch --timeout=180s statefulset/operationsmysql -n ${CHART_NAMESPACE} 
             sleep 60
-            kubectl -n ${CHART_NAMESPACE} port-forward service/operationsmysql 15300:3306 & sleep 5
             fix_ops_db() {
               kubectl scale deployment ph-ee-operations-app --replicas=0 -n ${CHART_NAMESPACE}
               kubectl exec -n ${CHART_NAMESPACE} -it operationsmysql-0 -- /bin/bash -c "mysql -u root -p$root_pass --execute=\"DROP DATABASE tenants;DROP DATABASE rhino;DROP DATABASE gorilla;CREATE DATABASE tenants;GRANT ALL PRIVILEGES ON tenants.* TO 'mifos';CREATE DATABASE rhino;CREATE DATABASE gorilla;GRANT ALL PRIVILEGES ON rhino.* TO 'mifos';GRANT ALL PRIVILEGES ON gorilla.* TO 'mifos';GRANT ALL ON *.* TO 'root'@'%';\" -vvv"
@@ -83,7 +82,8 @@ jobs:
               echo "processing bpmn: $(basename $bpmn)"
               curl --location 'http://127.0.0.1:15200/zeebe/upload' --form "file=@$bpmn"
             done
-            pkill kubectl
+            killall kubectl
+            sleep 30
   test-deployed-payment-hub-and-fineract:
     docker:
       - image: cimg/aws:2023.03
@@ -114,6 +114,8 @@ jobs:
             kubectl wait deployment -n ${CHART_NAMESPACE} fineract-server --for condition=Available=True --timeout=180s
             pod_name=$(kubectl get pods --selector=app=fineract-server -n ${CHART_NAMESPACE} -o jsonpath="{.items[0].metadata.name}") 
             kubectl -n ${CHART_NAMESPACE} port-forward pod/$pod_name 15100:8443 & sleep 5
+            sleep 30
+            echo "Testing Fineract Server Endpoint"
             fineract_server_response=$(curl -w " %{http_code}" --location 'https://127.0.0.1:15100/fineract-provider/actuator/health' -k)
             fineract_server_response_code=$(echo $fineract_server_response | awk '{print $2}')
             fineract_server_response_body=$(echo $fineract_server_response | awk '{print $1}')
