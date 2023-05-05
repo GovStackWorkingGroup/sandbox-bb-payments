@@ -82,7 +82,7 @@ jobs:
               echo "processing bpmn: $(basename $bpmn)"
               curl --location 'http://127.0.0.1:15200/zeebe/upload' --form "file=@$bpmn"
             done
-            killall kubectl
+            pkill kubectl
             sleep 30
   test-deployed-payment-hub-and-fineract:
     docker:
