@@ -73,6 +73,7 @@ jobs:
           command: |
             sleep 180
             kubectl delete pods -n ${CHART_NAMESPACE} $(kubectl get pods -n ${CHART_NAMESPACE} | grep fineract-server | awk '{print $1}')
+            sleep 180
       - run: 
           name: Deploy BPMNs
           command: |
@@ -124,9 +125,7 @@ jobs:
             echo "Validate Fineract Server Endpoint"
             kubectl wait deployment -n ${CHART_NAMESPACE} fineract-server --for condition=Available=True --timeout=180s
             pod_name=$(kubectl get pods --selector=app=fineract-server -n ${CHART_NAMESPACE} -o jsonpath="{.items[0].metadata.name}")
-            sleep 120
             kubectl -n ${CHART_NAMESPACE} port-forward pod/$pod_name 15100:8443 & sleep 5
-            sleep 30
             echo "Testing Fineract Server Endpoint"
             fineract_server_response=$(curl -w " %{http_code}" --location 'https://127.0.0.1:15100/fineract-provider/actuator/health' -k)
             fineract_server_response_code=$(echo $fineract_server_response | awk '{print $2}')
