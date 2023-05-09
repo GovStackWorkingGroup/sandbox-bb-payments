@@ -54,15 +54,12 @@ jobs:
           command: |
             REPLICAS=$(kubectl describe deployments ph-ee-operations-app -n ${CHART_NAMESPACE} | grep desired | awk '{print $2}')
             kubectl scale deployment ph-ee-operations-app --replicas=0 -n ${CHART_NAMESPACE}
-            sudo apt-get update
-            sudo apt-get install -y mysql-client
             root_pass=$(kubectl get secret operationsmysql -o jsonpath='{.data.mysql-root-password}' -n ${CHART_NAMESPACE} | base64 --decode)
             kubectl rollout status --watch --timeout=180s statefulset/operationsmysql -n ${CHART_NAMESPACE} 
             sleep 60
-            kubectl -n ${CHART_NAMESPACE} port-forward service/operationsmysql 15300:3306 & sleep 5
             fix_ops_db() {
               kubectl scale deployment ph-ee-operations-app --replicas=0 -n ${CHART_NAMESPACE}
-              mysql -h 127.0.0.1 -P 15300 -u root -p$root_pass --execute="DROP DATABASE tenants;DROP DATABASE rhino;DROP DATABASE gorilla;CREATE DATABASE tenants;GRANT ALL PRIVILEGES ON tenants.* TO 'mifos';CREATE DATABASE rhino;CREATE DATABASE gorilla;GRANT ALL PRIVILEGES ON rhino.* TO 'mifos';GRANT ALL PRIVILEGES ON gorilla.* TO 'mifos';GRANT ALL ON *.* TO 'root'@'%';" -vvv
+              kubectl exec -n ${CHART_NAMESPACE} -it operationsmysql-0 -- /bin/bash -c "mysql -u root -p$root_pass --execute=\"DROP DATABASE tenants;DROP DATABASE rhino;DROP DATABASE gorilla;CREATE DATABASE tenants;GRANT ALL PRIVILEGES ON tenants.* TO 'mifos';CREATE DATABASE rhino;CREATE DATABASE gorilla;GRANT ALL PRIVILEGES ON rhino.* TO 'mifos';GRANT ALL PRIVILEGES ON gorilla.* TO 'mifos';GRANT ALL ON *.* TO 'root'@'%';\" -vvv"
               kubectl scale deployment ph-ee-operations-app --replicas=$REPLICAS -n ${CHART_NAMESPACE}
             }
             fix_ops_db
@@ -76,6 +73,8 @@ jobs:
           command: |
             sleep 180
             kubectl delete pods -n ${CHART_NAMESPACE} $(kubectl get pods -n ${CHART_NAMESPACE} | grep fineract-server | awk '{print $1}')
+            echo "Sleep after pod restart"
+            sleep 180
       - run: 
           name: Deploy BPMNs
           command: |
@@ -85,14 +84,77 @@ jobs:
               echo "processing bpmn: $(basename $bpmn)"
               curl --location 'http://127.0.0.1:15200/zeebe/upload' --form "file=@$bpmn"
             done
-            ps -ef | grep port-forward | grep -v grep | awk '{print $2}' | xargs kill -9
-
+            pkill kubectl
+  test-deployed-payment-hub-and-fineract:
+    docker:
+      - image: cimg/aws:2023.03
+    steps:
+      - checkout
+      - aws-cli/setup:
+          role-arn: 'arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev'
+          aws-region: AWS_DEFAULT_REGION
+          profile-name: CICDPipeline_sandbox-bb-payments_Role_dev
+          role-session-name: CircleSession
+          session-duration: '1800'
+      - aws-eks/update-kubeconfig-with-authenticator:
+          aws-region: "${AWS_DEFAULT_REGION}"
+          cluster-name: "${AWS_CLUSTER_NAME}"
+          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev
+      - run:
+          name: Validate deployments
+          command: |
+            echo "Validate deployments"
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-operations-app -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/fineract-server -n ${CHART_NAMESPACE}
+            echo "Validate statefulsets"
+            kubectl rollout status --watch --timeout=60s statefulset/operationsmysql -n ${CHART_NAMESPACE}
+      - run:
+          name: Validate Operations APP Api Endpoint
+          command: |
+            echo "Validate Operations APP Endpoint"
+            kubectl -n ${CHART_NAMESPACE} port-forward service/ph-ee-operations-app 15000:80 & sleep 5
+            op_app_response=$(curl -w "<->%{http_code}" --location 'http://127.0.0.1:15000/oauth/token_key')
+            op_app_response_code=$(echo $op_app_response | awk -F"<->" '{print $2}')
+            if [ "$op_app_response_code" != "200" ]; then
+              echo "Operations APP Endpoint test failed!"
+              exit 1
+            fi
+            pkill kubectl
+      - run:
+          name: Validate Fineract Server Api Endpoint
+          command: |
+            echo "Validate Fineract Server Endpoint"
+            kubectl wait deployment -n ${CHART_NAMESPACE} fineract-server --for condition=Available=True --timeout=180s
+            pod_name=$(kubectl get pods --selector=app=fineract-server -n ${CHART_NAMESPACE} -o jsonpath="{.items[0].metadata.name}")
+            kubectl -n ${CHART_NAMESPACE} port-forward pod/$pod_name 15100:8443 & sleep 5
+            echo "Testing Fineract Server Endpoint"
+            fineract_server_response=$(curl -w " %{http_code}" --location 'https://127.0.0.1:15100/fineract-provider/actuator/health' -k)
+            fineract_server_response_code=$(echo $fineract_server_response | awk '{print $2}')
+            fineract_server_response_body=$(echo $fineract_server_response | awk '{print $1}')
+            if [ "$fineract_server_response_code" != "200" ] || [ "$fineract_server_response_body" != "{\"status\":\"UP\",\"groups\":[\"liveness\",\"readiness\"]}" ]; then
+              echo "Fineract Server Endpoint test failed!"
+              exit 1
+            fi
+            pkill kubectl
+            
 parameters:
   deploy_allowed:
     type: boolean
     default: false
+  test_allowed:
+    type: boolean
+    default: false
 
 workflows:
+  Test Deployment:
+    when: << pipeline.parameters.test_allowed >>
+    jobs:
+      - hold:
+          type: approval
+      - test-deployed-payment-hub-and-fineract:
+          context: aws
+          requires:
+            - hold
   Deloy PaymentHub and Fineract to EKS cluster:
     when: << pipeline.parameters.deploy_allowed >>
     jobs:
@@ -102,3 +164,8 @@ workflows:
           context: aws
           requires:
             - hold
+      - test-deployed-payment-hub-and-fineract:
+          context: aws
+          requires:
+            - deploy-payment-hub-and-fineract
+
