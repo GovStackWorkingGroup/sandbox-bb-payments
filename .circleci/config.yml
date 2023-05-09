@@ -124,7 +124,7 @@ jobs:
             echo "Validate Fineract Server Endpoint"
             kubectl wait deployment -n ${CHART_NAMESPACE} fineract-server --for condition=Available=True --timeout=180s
             pod_name=$(kubectl get pods --selector=app=fineract-server -n ${CHART_NAMESPACE} -o jsonpath="{.items[0].metadata.name}")
-            sleep 60
+            sleep 120
             kubectl -n ${CHART_NAMESPACE} port-forward pod/$pod_name 15100:8443 & sleep 5
             sleep 30
             echo "Testing Fineract Server Endpoint"
