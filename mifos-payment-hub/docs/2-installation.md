@@ -61,6 +61,8 @@ Migration script race condition Operation app startup issue work around
 ```
 5. restart ops-app (pod: "ph-ee-operations-app")
 
+More information about this issue: [INFO](https://github.com/openMF/ph-ee-env-labs/tree/master/helm/g2p-sandbox#readme)
+
 ## Known Issue Fineract
 
 There is race condition with migrations runned in fineract-server pod. When migrations are not runned completely login in fineract "Community app" is not possible with tennant "gorilla".

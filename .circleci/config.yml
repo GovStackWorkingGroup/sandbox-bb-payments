@@ -104,10 +104,27 @@ jobs:
           name: Validate deployments
           command: |
             echo "Validate deployments"
-            kubectl rollout status --watch --timeout=60s deployment/ph-ee-operations-app -n ${CHART_NAMESPACE}
             kubectl rollout status --watch --timeout=60s deployment/fineract-server -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/kafka -n ${CHART_NAMESPACE}           
+            kubectl rollout status --watch --timeout=60s deployment/message-gateway -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/mifos-community -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-connector-ams-mifos -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-connector-bulk -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-connector-channel -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-connector-gsma -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-importer-es -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-importer-rdbms -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-kibana -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-operations-app -n ${CHART_NAMESPACE}     
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-operations-web -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-zeebe-ops -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/zeebe-operate -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s deployment/zeebe-zeebe-gateway -n ${CHART_NAMESPACE}
             echo "Validate statefulsets"
+            kubectl rollout status --watch --timeout=60s statefulset/fineract-mysql -n ${CHART_NAMESPACE}
             kubectl rollout status --watch --timeout=60s statefulset/operationsmysql -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s statefulset/ph-ee-elasticsearch -n ${CHART_NAMESPACE}
+            kubectl rollout status --watch --timeout=60s statefulset/zeebe-zeebe -n ${CHART_NAMESPACE}
       - run:
           name: Validate Operations APP Api Endpoint
           command: |
