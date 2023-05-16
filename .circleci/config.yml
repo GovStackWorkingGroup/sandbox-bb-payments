@@ -166,6 +166,38 @@ jobs:
               exit 1
             fi
             pkill kubectl
+      - run:
+          name: Validate Bulk connector Api Endpoint
+          command: |
+            echo "Validate Bulk connector Api Endpoint"
+            kubectl -n ${CHART_NAMESPACE} port-forward service/ph-ee-connector-bulk 15000:80 & sleep 5
+            response=$(curl -w "<->%{http_code}" --location 'http://127.0.0.1:15000')
+            response_code=$(echo $response | awk -F"<->" '{print $2}')
+            if [ "$response_code" != "200" ]; then
+              echo "Bulk connector Api Endpoint test failed!"
+              exit 1
+            fi
+            pkill kubectl
+      - run:
+          name: Validate Channel connector Api Endpoint
+          command: |
+            echo "Validate Channel connector Api Endpoint"
+            kubectl -n ${CHART_NAMESPACE} port-forward service/ph-ee-connector-channel 15000:80 & sleep 5
+            response=$(curl -w "<->%{http_code}" --location 'http://127.0.0.1:15000/actuator/health/liveness')
+            response_code=$(echo $response | awk -F"<->" '{print $2}')
+            response_body=$(echo $response | awk -F"<->" '{print $1}')
+            if [ "$response_code" != "200" ] || [ "$response_body" != "{\"status\":\"UP\"}" ]; then
+              echo "Channel connector Api Endpoint test failed!"
+              exit 1
+            fi
+            response=$(curl -w "<->%{http_code}" --location 'http://127.0.0.1:15000/actuator/health/readiness')
+            response_code=$(echo $response | awk -F"<->" '{print $2}')
+            response_body=$(echo $response | awk -F"<->" '{print $1}')
+            if [ "$response_code" != "200" ] || [ "$response_body" != "{\"status\":\"UP\"}" ]; then
+              echo "Channel connector Api Endpoint test failed!"
+              exit 1
+            fi
+            pkill kubectl
             
 parameters:
   deploy_allowed:
