@@ -29,7 +29,7 @@ ph-ee-engine:
 
   channel:
     image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-phee-channel"
-    imageTag: v1.4.0
+    imageTag: v1.4.2
     gsma_payee_tenant: "gorilla"
     limits:
       cpu: "500m"
