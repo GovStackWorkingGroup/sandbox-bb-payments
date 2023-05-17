@@ -48,7 +48,13 @@ jobs:
           name: Install chart
           command: |
             helm dependency update ./mifos-payment-hub/helm/g2p-sandbox
-            helm upgrade -f ./mifos-payment-hub/helm/g2p-sandbox/values.yaml -f ./mifos-payment-hub/helm/g2p-sandbox/values-sandbox.yaml --set fin-engine.namespace=${CHART_NAMESPACE} g2pconnect ./mifos-payment-hub/helm/g2p-sandbox --install --create-namespace -n ${CHART_NAMESPACE}
+            helm upgrade -f ./mifos-payment-hub/helm/g2p-sandbox/values.yaml -f ./mifos-payment-hub/helm/g2p-sandbox/values-sandbox.yaml \
+              --set fin-engine.namespace=${CHART_NAMESPACE} \
+              --set ph-ee-engine.connector_bulk.bucket_name=${BULK_S3_BUCKET} \
+              --set ph-ee-engine.connector_bulk.aws.region=${BULK_AWS_REGION} \
+              --set ph-ee-engine.connector_bulk.aws.access_key=${BULK_AWS_ACCESS_KEY} \
+              --set ph-ee-engine.connector_bulk.aws.secret_key=${BULK_AWS_SECRET_KEY} \
+              g2pconnect ./mifos-payment-hub/helm/g2p-sandbox --install --create-namespace -n ${CHART_NAMESPACE}
       - run:
           name: Fix Operation app DATABASE
           command: |
