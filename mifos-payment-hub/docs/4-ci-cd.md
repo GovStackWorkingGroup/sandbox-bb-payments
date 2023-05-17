@@ -20,7 +20,9 @@ To run follow those steps:
 5. Then trigger the pipeline
 
 ## Testing
-Deployment process covered with a tests. They are checking if all pods (deployment and statefulset) are up and run in 60 seconds.
+Deployment process covered with a tests. They are checking:
+* if all pods (deployment and statefulset) are up and run in 60 seconds.
+* availabillity of used APIs.
 
 ### Circle CI Test Workflow:
 
