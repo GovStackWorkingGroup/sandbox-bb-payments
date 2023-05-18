@@ -104,4 +104,4 @@ Source documentation provied from Mifos: [INFO](https://docs.google.com/document
 To import kibana visualisations:
 1. Port-forward to kibana pod (ph-ee-kibana-****)
 2. Navigate to Stack Management > Saved Objects
-3. Use import and import the visualisations from [Visualisations](./../kibana_visualisations/dashboard/) and [Visualisations](./../kibana_visualisations/index-pattern/)
+3. Use import and import the visualisations from [Visualisations](./../kibana_visualisations/dashboard/) and [Index-Patterns](./../kibana_visualisations/index-pattern/)
