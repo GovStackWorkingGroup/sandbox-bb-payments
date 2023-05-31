@@ -1,16 +1,16 @@
-package global.govstack.payment.bb.mock.model;
+package global.govstack.payment.bb.mock.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class BeneficiaryRequest {
+public class BeneficiaryRequestDTO {
     @JsonProperty("RequestID")
     private String requestId;
     @JsonProperty("SourceBBID")
     private String sourceBBID;
     @JsonProperty("Beneficiaries")
-    private List<Beneficiary> beneficiaries;
+    private List<BeneficiaryDTO> beneficiaries;
 
     public String getRequestId() {
         return requestId;
@@ -28,11 +28,11 @@ public class BeneficiaryRequest {
         this.sourceBBID = sourceBBID;
     }
 
-    public List<Beneficiary> getBeneficiaries() {
+    public List<BeneficiaryDTO> getBeneficiaries() {
         return beneficiaries;
     }
 
-    public void setBeneficiaries(List<Beneficiary> beneficiaries) {
+    public void setBeneficiaries(List<BeneficiaryDTO> beneficiaries) {
         this.beneficiaries = beneficiaries;
     }
 }

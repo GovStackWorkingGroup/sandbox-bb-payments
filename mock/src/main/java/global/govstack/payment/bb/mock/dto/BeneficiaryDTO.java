@@ -1,23 +1,15 @@
-package global.govstack.payment.bb.mock.model;
+package global.govstack.payment.bb.mock.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import global.govstack.payment.bb.mock.model.Beneficiary;
 
-@Entity
-public class Beneficiary {
-
-    @Id
+public class BeneficiaryDTO {
+    @JsonProperty("PayeeFunctionalID")
     private String payeeFunctionalID;
+    @JsonProperty("PaymentModality")
     private String paymentModality;
+    @JsonProperty("FinancialAddress")
     private String financialAddress;
-
-    public Beneficiary() {}
-
-    public Beneficiary(String payeeFunctionalID, String paymentModality, String financialAddress) {
-        this.payeeFunctionalID = payeeFunctionalID;
-        this.paymentModality = paymentModality;
-        this.financialAddress = financialAddress;
-    }
 
     public String getPayeeFunctionalID() {
         return payeeFunctionalID;
@@ -41,6 +33,10 @@ public class Beneficiary {
 
     public void setFinancialAddress(String financialAddress) {
         this.financialAddress = financialAddress;
+    }
+
+    public Beneficiary transformToEntity() {
+        return new Beneficiary(this.payeeFunctionalID, this.paymentModality, this.financialAddress);
     }
 
 }

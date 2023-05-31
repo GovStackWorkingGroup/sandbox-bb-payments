@@ -1,15 +1,21 @@
-package global.govstack.payment.bb.mock.model;
+package global.govstack.payment.bb.mock.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class BeneficiaryResponse {
 
+public class BeneficiaryResponseDTO {
     @JsonProperty("ResponseCode")
     private String responseCode;
     @JsonProperty("ResponseDescription")
     private String responseDescription;
     @JsonProperty("RequestID")
     private String requestID;
+
+    public BeneficiaryResponseDTO(String responseCode, String responseDescription, String requestID) {
+        this.responseCode = responseCode;
+        this.responseDescription = responseDescription;
+        this.requestID = requestID;
+    }
 
     public String getResponseCode() {
         return responseCode;
