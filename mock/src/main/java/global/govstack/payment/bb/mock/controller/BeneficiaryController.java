@@ -3,7 +3,7 @@ package global.govstack.payment.bb.mock.controller;
 import global.govstack.payment.bb.mock.dto.BeneficiaryRequestDTO;
 import global.govstack.payment.bb.mock.dto.BeneficiaryResponseDTO;
 import global.govstack.payment.bb.mock.model.Beneficiary;
-import global.govstack.payment.bb.mock.service.BeneficiaryService;
+import global.govstack.payment.bb.mock.service.BeneficiaryV1Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ import java.util.List;
 public class BeneficiaryController {
 
     @Autowired
-    BeneficiaryService beneficiaryService;
+    BeneficiaryV1Service beneficiaryService;
 
     @PostMapping(path = "register-beneficiary",
             consumes = MediaType.APPLICATION_JSON_VALUE,
