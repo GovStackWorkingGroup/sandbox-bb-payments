@@ -3,9 +3,11 @@ package global.govstack.payment.bb.mock.controller;
 import global.govstack.payment.bb.mock.dto.BulkpaymentBody;
 import global.govstack.payment.bb.mock.dto.InlineResponse200;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import global.govstack.payment.bb.mock.service.CreditInstructionService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +36,9 @@ public class BulkPaymentApiController implements BulkPaymentApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
+    private CreditInstructionService creditInstructionService;
+
     @org.springframework.beans.factory.annotation.Autowired
     public BulkPaymentApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -43,12 +48,8 @@ public class BulkPaymentApiController implements BulkPaymentApi {
     public ResponseEntity<InlineResponse200> bulkPaymentPost(@ApiParam(value = "", required=true ) @Valid @RequestBody BulkpaymentBody body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<InlineResponse200>(objectMapper.readValue("{\n  \"ResponseCode\" : \"ResponseCode\",\n  \"RequestID\" : \"RequestID\",\n  \"ResponseDescription\" : \"ResponseDescription\"\n}", InlineResponse200.class), HttpStatus.OK);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<InlineResponse200>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            InlineResponse200 response = creditInstructionService.bulkPayment(body);
+            return new ResponseEntity<InlineResponse200>(response, response.getResponseCode() == "00" ? HttpStatus.OK: HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<InlineResponse200>(HttpStatus.NOT_IMPLEMENTED);

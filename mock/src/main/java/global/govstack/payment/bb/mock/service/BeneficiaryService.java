@@ -8,6 +8,7 @@ import global.govstack.payment.bb.mock.model.Beneficiary;
 import global.govstack.payment.bb.mock.repository.BeneficiaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class BeneficiaryService {
     private Boolean beneficiariesExists(List<Beneficiary> beneficiaries){
         return beneficiaries
                 .stream()
-                .allMatch(n -> repository.existsBeneficiaryByPayeeFunctionalID(n.getPayeeFunctionalID()) == true);
+                .allMatch(n -> repository.existsBeneficiaryByPayeeFunctionalID(n.getPayeeFunctionalID()));
     }
     private List<Beneficiary> saveBeneficiaries(List<Beneficiary> beneficiaries) throws RuntimeException {
         if(beneficiariesExists(beneficiaries)){
@@ -47,6 +48,7 @@ public class BeneficiaryService {
         return repository.saveAll(beneficiaries);
     }
 
+    @Transactional
     public InlineResponse200 register(RegisterbeneficiaryBody body) {
         try {
             List<Beneficiary> beneficiaries = convertToEntities(body.getBeneficiaries());
@@ -63,6 +65,7 @@ public class BeneficiaryService {
                 .responseDescription("OK");
     }
 
+    @Transactional
     public InlineResponse200 update(UpdatebeneficiarydetailsBody body) {
         try {
             List<Beneficiary> beneficiaries = convertToEntities(body.getBeneficiaries());

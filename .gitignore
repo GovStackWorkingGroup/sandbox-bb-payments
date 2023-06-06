@@ -9,6 +9,7 @@ Chart.lock
 
 HELP.md
 .gradle
+.local
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/

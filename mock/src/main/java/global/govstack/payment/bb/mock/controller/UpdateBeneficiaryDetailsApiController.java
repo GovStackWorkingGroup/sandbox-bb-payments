@@ -36,17 +36,6 @@ public class UpdateBeneficiaryDetailsApiController implements UpdateBeneficiaryD
     }
 
     public ResponseEntity<InlineResponse200> updateBeneficiaryDetailsPost(@ApiParam(value = "", required=true ) @Valid @RequestBody UpdatebeneficiarydetailsBody body) {
-        /*String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<InlineResponse200>(objectMapper.readValue("{\n  \"ResponseCode\" : \"ResponseCode\",\n  \"RequestID\" : \"RequestID\",\n  \"ResponseDescription\" : \"ResponseDescription\"\n}", InlineResponse200.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<InlineResponse200>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<InlineResponse200>(HttpStatus.NOT_IMPLEMENTED);*/
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             InlineResponse200 response = registerBeneficiaryService.update(body);
