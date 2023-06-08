@@ -3,6 +3,9 @@
 ## Specification
 [Payment Building Block Specification](https://github.com/GovStackWorkingGroup/bb-payments)
 
+## Emulator
+[Documentation](./emulator/docs/1-main.md)
+
 ## Candidates
 
 ### Mifos
