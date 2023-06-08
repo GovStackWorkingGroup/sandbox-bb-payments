@@ -25,10 +25,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-tasks.named('bootBuildImage') {
-	imageName = "bb/payment/emulator:${version}"
-	doLast {
-		println "Image Name: ${bootBuildImage.imageName.get()}"
-	}
-}
