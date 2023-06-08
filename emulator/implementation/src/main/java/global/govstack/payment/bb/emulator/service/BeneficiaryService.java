@@ -8,7 +8,9 @@ import global.govstack.payment.bb.emulator.model.Beneficiary;
 import global.govstack.payment.bb.emulator.repository.BeneficiaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +36,7 @@ public class BeneficiaryService {
                 .stream()
                 .allMatch(n -> repository.existsBeneficiaryByPayeeFunctionalID(n.getPayeeFunctionalID()));
     }
+
     private List<Beneficiary> saveBeneficiaries(List<Beneficiary> beneficiaries) throws RuntimeException {
         if(beneficiariesExists(beneficiaries)){
             throw new RuntimeException("Beneficiary exist!");
@@ -41,7 +44,7 @@ public class BeneficiaryService {
         return repository.saveAll(beneficiaries);
     }
 
-    public List<Beneficiary> updateBeneficiaries(List<Beneficiary> beneficiaries) throws RuntimeException {
+    private List<Beneficiary> updateBeneficiaries(List<Beneficiary> beneficiaries) throws RuntimeException {
         if(!beneficiariesExists(beneficiaries)){
             throw new RuntimeException("Beneficiary does not exist!");
         }
@@ -54,6 +57,7 @@ public class BeneficiaryService {
             List<Beneficiary> beneficiaries = convertToEntities(body.getBeneficiaries());
             saveBeneficiaries(beneficiaries);
         } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new InlineResponse200()
                     .requestID(body.getRequestID())
                     .responseCode("01")
@@ -71,6 +75,7 @@ public class BeneficiaryService {
             List<Beneficiary> beneficiaries = convertToEntities(body.getBeneficiaries());
             updateBeneficiaries(beneficiaries);
         } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new InlineResponse200()
                     .requestID(body.getRequestID())
                     .responseCode("01")

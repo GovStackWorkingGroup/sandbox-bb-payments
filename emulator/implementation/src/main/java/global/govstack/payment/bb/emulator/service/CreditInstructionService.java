@@ -7,6 +7,7 @@ import global.govstack.payment.bb.emulator.repository.CreditInstructionRepositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,13 +45,6 @@ public class CreditInstructionService {
                 .build();
     }
 
-    private List<CreditInstruction> covertBulkpaymentCreditInstructionsToEntity(List<BulkpaymentCreditInstructions> creditInstructions) {
-        return creditInstructions
-                .stream()
-                .map(n -> transformBulkpaymentCreditInstructionsToEntity(n))
-                .collect(Collectors.toList());
-    }
-
     private void validatePrepaymentCreditInstructions(List<PrepaymentvalidationCreditInstructions> creditInstructions) {
         List<String> ids = creditInstructions
                 .stream()
@@ -84,6 +78,7 @@ public class CreditInstructionService {
             validatePrepaymentCreditInstructions(body.getCreditInstructions());
             creditInstructionRepository.saveAll(covertPrepaymentvalidationCreditInstructionsToEntity(body.getCreditInstructions()));
         } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new InlineResponse200()
                     .requestID(body.getRequestID())
                     .responseCode("01")
@@ -103,6 +98,7 @@ public class CreditInstructionService {
 
             creditInstructionRepository.saveAll(ci);
         } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new InlineResponse200()
                     .requestID(body.getRequestID())
                     .responseCode("01")
