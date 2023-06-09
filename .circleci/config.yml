@@ -239,7 +239,7 @@ jobs:
       - run:
           name: Docker login
           command: |
-            aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 419830066942.dkr.ecr.ap-south-1.amazonaws.com
+            aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 463471358064.dkr.ecr.eu-central-1.amazonaws.com
             docker tag ${DOCKER_IMAGE} 463471358064.dkr.ecr.eu-central-1.amazonaws.com/${DOCKER_IMAGE}
             docker push 463471358064.dkr.ecr.eu-central-1.amazonaws.com/${DOCKER_IMAGE}
 
