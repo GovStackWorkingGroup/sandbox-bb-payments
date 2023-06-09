@@ -213,11 +213,9 @@ jobs:
             pkill kubectl
   deploy-emulator:
     docker:
-      - image: circleci/openjdk:11.0.16
+      - image: cimg/openjdk:11.0.16
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.14
       - run:
           name: Set environment variables
           command: |
