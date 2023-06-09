@@ -214,6 +214,7 @@ jobs:
   deploy-emulator:
     docker:
       - image: cimg/openjdk:17.0.7
+    working_directory: /home/circleci/project/emulator/implementation/
     steps:
       - checkout
       - run:
@@ -229,6 +230,7 @@ jobs:
           command: |
             ls /home/circleci/project
             ls ./emulator/implementation
+            ls
             ./emulator/implementation/gradlew bootBuildImage --imageName=${DOCKER_IMAGE}
       - aws-cli/setup:
           role-arn: 'arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev'
