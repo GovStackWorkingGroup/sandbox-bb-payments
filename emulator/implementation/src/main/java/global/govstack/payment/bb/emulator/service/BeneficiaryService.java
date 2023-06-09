@@ -6,11 +6,11 @@ import global.govstack.payment.bb.emulator.dto.RegisterbeneficiaryBody;
 import global.govstack.payment.bb.emulator.dto.UpdatebeneficiarydetailsBody;
 import global.govstack.payment.bb.emulator.model.Beneficiary;
 import global.govstack.payment.bb.emulator.repository.BeneficiaryRepository;
+import global.govstack.payment.bb.emulator.service.exception.BeneficiaryServiceException;
+import global.govstack.payment.bb.emulator.service.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,18 +37,18 @@ public class BeneficiaryService {
                 .allMatch(n -> repository.existsBeneficiaryByPayeeFunctionalID(n.getPayeeFunctionalID()));
     }
 
-    private List<Beneficiary> saveBeneficiaries(List<Beneficiary> beneficiaries) throws RuntimeException {
+    private void saveBeneficiaries(List<Beneficiary> beneficiaries) throws RuntimeException {
         if(beneficiariesExists(beneficiaries)){
-            throw new RuntimeException("Beneficiary exist!");
+            throw new BeneficiaryServiceException("Beneficiary exist!");
         }
-        return repository.saveAll(beneficiaries);
+        repository.saveAll(beneficiaries);
     }
 
-    private List<Beneficiary> updateBeneficiaries(List<Beneficiary> beneficiaries) throws RuntimeException {
+    private void updateBeneficiaries(List<Beneficiary> beneficiaries) throws RuntimeException {
         if(!beneficiariesExists(beneficiaries)){
-            throw new RuntimeException("Beneficiary does not exist!");
+            throw new BeneficiaryServiceException("Beneficiary does not exist!");
         }
-        return repository.saveAll(beneficiaries);
+        repository.saveAll(beneficiaries);
     }
 
     @Transactional
@@ -56,17 +56,17 @@ public class BeneficiaryService {
         try {
             List<Beneficiary> beneficiaries = convertToEntities(body.getBeneficiaries());
             saveBeneficiaries(beneficiaries);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return new InlineResponse200()
+        } catch (BeneficiaryServiceException e) {
+            InlineResponse200 errorResponse = new InlineResponse200()
                     .requestID(body.getRequestID())
                     .responseCode("01")
                     .responseDescription(e.getMessage());
+            throw new ServiceException(e.getMessage(), errorResponse);
         }
         return new InlineResponse200()
                 .requestID(body.getRequestID())
                 .responseCode("00")
-                .responseDescription("OK");
+                .responseDescription("Beneficiaries registered!");
     }
 
     @Transactional
@@ -74,16 +74,17 @@ public class BeneficiaryService {
         try {
             List<Beneficiary> beneficiaries = convertToEntities(body.getBeneficiaries());
             updateBeneficiaries(beneficiaries);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return new InlineResponse200()
+        } catch (BeneficiaryServiceException e) {
+            InlineResponse200 errorResponse = new InlineResponse200()
                     .requestID(body.getRequestID())
                     .responseCode("01")
                     .responseDescription(e.getMessage());
+            throw new ServiceException(e.getMessage(), errorResponse);
         }
         return new InlineResponse200()
                 .requestID(body.getRequestID())
                 .responseCode("00")
-                .responseDescription("OK");
+                .responseDescription("Beneficiaries updated!");
     }
+
 }
