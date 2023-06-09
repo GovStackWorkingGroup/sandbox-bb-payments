@@ -222,7 +222,7 @@ jobs:
           name: Set environment variables
           command: |
             echo 'export IMAGE_VERSION=$(cat ./emulator/implementation/build.gradle | grep "version =" | sed "s/version = '\''\([^'\'']*\)'\''/\1/")' >> $BASH_ENV
-            echo 'export ECR_REGISTRY=bb/payments/emulator/backend' >> $BASH_ENV
+            echo 'export ECR_REGISTRY=bb/payments/emulator/dev-backend' >> $BASH_ENV
             echo 'export DOCKER_IMAGE=${ECR_REGISTRY}:${IMAGE_VERSION}' >> $BASH_ENV
             source $BASH_ENV
       - run:
