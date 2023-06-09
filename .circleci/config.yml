@@ -214,7 +214,7 @@ jobs:
   deploy-emulator:
     docker:
       - image: cimg/openjdk:17.0.7
-    working_directory: /home/circleci/project/emulator/implementation/
+    working_directory: ./emulator/implementation
     steps:
       - checkout
       - run:
