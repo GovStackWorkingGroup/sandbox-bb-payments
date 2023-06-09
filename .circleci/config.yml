@@ -226,7 +226,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            cd /emulator/implementation
+            cd ./emulator/implementation
             ./gradlew bootBuildImage --imageName=${DOCKER_IMAGE}
       - aws-cli/setup:
           role-arn: 'arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev'
