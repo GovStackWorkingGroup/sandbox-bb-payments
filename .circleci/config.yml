@@ -223,15 +223,12 @@ jobs:
             echo 'export IMAGE_VERSION=$(cat ./emulator/implementation/build.gradle | grep "version =" | sed "s/version = '\''\([^'\'']*\)'\''/\1/")' >> $BASH_ENV
             echo 'export ECR_REGISTRY=bb/payments/emulator/backend' >> $BASH_ENV
             echo 'export DOCKER_IMAGE=${ECR_REGISTRY}:${IMAGE_VERSION}' >> $BASH_ENV
-            echo $DOCKER_IMAGE
             source $BASH_ENV
       - run:
           name: Build Docker image
           command: |
-            ls /home/circleci/project
-            ls ./emulator/implementation
-            ls
-            ./emulator/implementation/gradlew bootBuildImage --imageName=${DOCKER_IMAGE}
+            cd /emulator/implementation
+            ./gradlew bootBuildImage --imageName=${DOCKER_IMAGE}
       - aws-cli/setup:
           role-arn: 'arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev'
           aws-region: AWS_DEFAULT_REGION
