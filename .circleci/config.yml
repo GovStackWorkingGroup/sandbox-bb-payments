@@ -216,6 +216,8 @@ jobs:
       - image: cimg/openjdk:17.0.7
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.14
       - run:
           name: Set environment variables
           command: |
