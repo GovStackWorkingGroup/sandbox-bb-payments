@@ -80,7 +80,7 @@ ph-ee-engine:
 
 fin-engine:
   fineract:
-    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-fineract:mysqllatest"
+    image: "463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-fineract:1.8.2"
 
   communityapp:
     image: 463471358064.dkr.ecr.eu-central-1.amazonaws.com/payment-hub/dev-community-app:latest

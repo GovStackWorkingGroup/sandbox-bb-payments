@@ -4,6 +4,9 @@ import global.govstack.payment.bb.emulator.dto.*;
 import global.govstack.payment.bb.emulator.model.CreditInstruction;
 import global.govstack.payment.bb.emulator.repository.BeneficiaryRepository;
 import global.govstack.payment.bb.emulator.repository.CreditInstructionRepository;
+import global.govstack.payment.bb.emulator.service.exception.CreditInstructionServiceException;
+import global.govstack.payment.bb.emulator.service.exception.ServiceException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,20 +40,6 @@ public class CreditInstructionService {
                 .collect(Collectors.toList());
     }
 
-    private CreditInstruction transformBulkpaymentCreditInstructionsToEntity(BulkpaymentCreditInstructions instruction) {
-        return new CreditInstruction.CreditInstructionBuilder()
-                .setInstructionID(instruction.getInstructionID())
-                .setOrdered(true)
-                .build();
-    }
-
-    private List<CreditInstruction> covertBulkpaymentCreditInstructionsToEntity(List<BulkpaymentCreditInstructions> creditInstructions) {
-        return creditInstructions
-                .stream()
-                .map(n -> transformBulkpaymentCreditInstructionsToEntity(n))
-                .collect(Collectors.toList());
-    }
-
     private void validatePrepaymentCreditInstructions(List<PrepaymentvalidationCreditInstructions> creditInstructions) {
         List<String> ids = creditInstructions
                 .stream()
@@ -58,7 +47,7 @@ public class CreditInstructionService {
                 .collect(Collectors.toList());
 
         if (!beneficiariesExistsByPayeeFunctionalID(ids)) {
-            throw new RuntimeException("Beneficiary doesn't exist!");
+            throw new CreditInstructionServiceException("Beneficiary doesn't exist!");
         }
     }
 
@@ -67,7 +56,7 @@ public class CreditInstructionService {
                 .stream()
                 .map(n -> creditInstructionRepository
                                 .findValidatedCreditInstruction(n.getAmount(), n.getCurrency(), n.getInstructionID(), n.getNarration(), n.getPayeeFunctionalID())
-                                .orElseThrow(() -> new RuntimeException("No valid credit instruction for Instruction Id: \"" + n.getInstructionID() + "\"!"))
+                                .orElseThrow(() -> new CreditInstructionServiceException("No valid credit instruction for Instruction Id: \"" + n.getInstructionID() + "\"!"))
                 )
                 .collect(Collectors.toList());
     }
@@ -83,35 +72,37 @@ public class CreditInstructionService {
         try {
             validatePrepaymentCreditInstructions(body.getCreditInstructions());
             creditInstructionRepository.saveAll(covertPrepaymentvalidationCreditInstructionsToEntity(body.getCreditInstructions()));
-        } catch (Exception e) {
-            return new InlineResponse200()
+        } catch (CreditInstructionServiceException e) {
+            InlineResponse200 errorResponse = new InlineResponse200()
                     .requestID(body.getRequestID())
                     .responseCode("01")
                     .responseDescription(e.getMessage());
+            throw new ServiceException(e.getMessage(), errorResponse);
         }
         return new InlineResponse200()
                 .requestID(body.getRequestID())
                 .responseCode("00")
-                .responseDescription("OK");
+                .responseDescription("Payments Validated!");
     }
 
     @Transactional
     public InlineResponse200 bulkPayment(BulkpaymentBody body) {
         try {
             List<CreditInstruction> ci = getValidBulkpaymentCreditInstructions(body.getCreditInstructions());
-            ci.stream().forEach(n -> n.setOrdered(true));
+            ci.forEach(n -> n.setOrdered(true));
 
             creditInstructionRepository.saveAll(ci);
-        } catch (Exception e) {
-            return new InlineResponse200()
+        } catch (CreditInstructionServiceException e) {
+            InlineResponse200 errorResponse = new InlineResponse200()
                     .requestID(body.getRequestID())
                     .responseCode("01")
                     .responseDescription(e.getMessage());
+            throw new ServiceException(e.getMessage(), errorResponse);
         }
         return new InlineResponse200()
                 .requestID(body.getRequestID())
                 .responseCode("00")
-                .responseDescription("OK");
+                .responseDescription("Payments ordered!");
     }
 
 }

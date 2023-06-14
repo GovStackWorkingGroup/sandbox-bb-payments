@@ -72,6 +72,9 @@ jobs:
           name: Migrating Tenants
           command: |
             sleep 180
+            root_pass=$(kubectl get secret fineract-mysql -o jsonpath='{.data.mariadb-root-password}' -n ${CHART_NAMESPACE} | base64 --decode)
+            kubectl exec -n ${CHART_NAMESPACE} -it fineract-mysql-0 -- /bin/bash -c "mysql -u root -p$root_pass fineract_tenants --execute=\"INSERT IGNORE INTO tenant_server_connections (id, schema_server, schema_name, schema_server_port, schema_username, schema_password, auto_update, pool_initial_size, pool_validation_interval, pool_remove_abandoned, pool_remove_abandoned_timeout, pool_log_abandoned, pool_abandon_when_percentage_full, pool_test_on_borrow, pool_max_active, pool_min_idle, pool_max_idle, pool_suspect_timeout, pool_time_between_eviction_runs_millis, pool_min_evictable_idle_time_millis, schema_connection_parameters, readonly_schema_server, readonly_schema_name, readonly_schema_server_port, readonly_schema_username, readonly_schema_password, readonly_schema_connection_parameters) VALUES (2, 'fineract-mysql', 'gorilla', 3306, 'mifos', 'password', 1, 5, 30000, 1, 60, 1, 50, 1, 40, 20, 10, 60, 34000, 60000, 'serverTimezone=UTC&useLegacyDatetimeCode=false&sessionVariables=time_zone=\\\"-00:00\\\"', NULL, NULL, NULL, NULL, NULL, NULL);\" -vvv"
+            kubectl exec -n ${CHART_NAMESPACE} -it fineract-mysql-0 -- /bin/bash -c "mysql -u root -p$root_pass fineract_tenants -e \"INSERT IGNORE INTO tenants (id, identifier, name, timezone_id, country_id, joined_date, created_date, lastmodified_date, oltp_id, report_id) VALUES (2, 'gorilla', 'test2', 'Asia/Kolkata', NULL, NULL, NULL, NULL, 2, 2);\" -vvv"
             kubectl delete pods -n ${CHART_NAMESPACE} $(kubectl get pods -n ${CHART_NAMESPACE} | grep fineract-server | awk '{print $1}')
             echo "Sleep after pod restart"
             sleep 180
