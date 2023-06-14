@@ -8,6 +8,7 @@ import global.govstack.payment.bb.emulator.model.Beneficiary;
 import global.govstack.payment.bb.emulator.repository.BeneficiaryRepository;
 import global.govstack.payment.bb.emulator.service.exception.BeneficiaryServiceException;
 import global.govstack.payment.bb.emulator.service.exception.ServiceException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,5 +87,4 @@ public class BeneficiaryService {
                 .responseCode("00")
                 .responseDescription("Beneficiaries updated!");
     }
-
 }
