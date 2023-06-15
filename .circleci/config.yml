@@ -260,15 +260,17 @@ jobs:
           aws-region: "${AWS_DEFAULT_REGION}"
           cluster-name: "${AWS_CLUSTER_NAME}"
           cluster-authentication-role-arn: arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev
+      - helm/install-helm-client:
+          version: v3.2.0
       - run:
           name: Install chart
           command: |
             cd ./emulator
             export IMAGE_VERSION=$(cat ./implementation/build.gradle | grep "version =" | sed "s/version = '\''\([^'\'']*\)'\''/\1/")
-            helm upgrade \
+            helm upgrade payment-bb-emulator ./helm --install --create-namespace --namespace ${EMULATOR_NAMESPACE} \
               --set payment_bb_emulator.container.image="463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_EMULATOR_NAME}" \
               --set payment_bb_emulator.container.imageTag=${IMAGE_VERSION} \
-              payment-bb-emulator ./helm --install --create-namespace --namespace ${EMULATOR_NAMESPACE} --dry-run --debug
+              --dry-run --debug
             ls -la
       - run:
           name: Validate deployments
