@@ -264,9 +264,9 @@ jobs:
           name: Install chart
           command: |
             cd ./emulator
-            export IMAGE_VERSION=$(cat ./emulator/implementation/build.gradle | grep "version =" | sed "s/version = '\''\([^'\'']*\)'\''/\1/")
+            export IMAGE_VERSION=$(cat ./implementation/build.gradle | grep "version =" | sed "s/version = '\''\([^'\'']*\)'\''/\1/")
             helm upgrade \
-              --set payment_bb_emulator.container.image=463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REGISTRY} \
+              --set payment_bb_emulator.container.image=463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_EMULATOR_NAME} \
               --set payment_bb_emulator.container.imageTag=${IMAGE_VERSION} \
               payment-bb-emulator ./helm --install --create-namespace --namespace ${EMULATOR_NAMESPACE} --dry-run --debug
       - run:
