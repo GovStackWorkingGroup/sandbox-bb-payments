@@ -266,7 +266,7 @@ jobs:
           name: Install chart
           command: |
             cd ./emulator
-            IMAGE_VERSION=$(cat ./implementation/build.gradle | grep "version =" | sed "s/version = '\''\([^'\'']*\)'\''/\1/")
+            IMAGE_VERSION=$(cat ./implementation/build.gradle | grep "version =" | sed "s/^.*'\(.*\)'.*$/\1/")
             echo ${IMAGE_VERSION}
             helm upgrade \
               --set payment_bb_emulator.container.image="463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_EMULATOR_NAME}" \
