@@ -271,7 +271,7 @@ jobs:
             helm upgrade \
               --set payment_bb_emulator.container.image="463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_EMULATOR_NAME}" \
               --set payment_bb_emulator.container.imageTag=${IMAGE_VERSION} \
-              payment-bb-emulator ./helm --install --create-namespace --namespace ${EMULATOR_NAMESPACE} --dry-run --debug
+              payment-bb-emulator ./helm --install --create-namespace --namespace ${EMULATOR_NAMESPACE}
       - run:
           name: Validate deployments
           command: |
