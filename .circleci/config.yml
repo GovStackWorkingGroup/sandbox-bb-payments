@@ -251,15 +251,15 @@ jobs:
     steps:
       - checkout
       - aws-cli/setup:
-          role-arn: 'arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev'
+          role-arn: 'arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}'
           aws-region: AWS_DEFAULT_REGION
-          profile-name: CICDPipeline_sandbox-bb-payments_Role_dev
+          profile-name: ${AWS_CICD_ROLE}
           role-session-name: CircleSession
           session-duration: '1800'
       - aws-eks/update-kubeconfig-with-authenticator:
           aws-region: "${AWS_DEFAULT_REGION}"
           cluster-name: "${AWS_CLUSTER_NAME}"
-          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev
+          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}
       - helm/install-helm-client:
           version: v3.2.0
       - run:
