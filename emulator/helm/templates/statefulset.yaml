@@ -18,7 +18,17 @@ spec:
       initContainers:
         - name: fix-pvc-permissions
           image: busybox
-          command: ["sh", "-c", "chmod -R 777 {{ .Values.payment_bb_emulator.dbPersist.mountPath }}"]
+          command: ["sh", "-c"]
+          args:
+            - 
+              chmod -R 777 {{ .Values.payment_bb_emulator.dbPersist.mountPath }}
+
+              if [ $FLUSH_DB_STORAGE == "true" ]; then
+                rm -r {{ .Values.payment_bb_emulator.dbPersist.mountPath }}/* || true;
+              fi
+          env:
+            - name: FLUSH_DB_STORAGE
+              value: "{{ .Values.payment_bb_emulator.dbPersist.flushStorageOnInit }}"
           volumeMounts:
             - name: {{ .Values.payment_bb_emulator.dbPersist.volumeMountName }}
               mountPath: {{ .Values.payment_bb_emulator.dbPersist.mountPath }}
