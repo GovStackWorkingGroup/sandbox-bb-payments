@@ -271,6 +271,7 @@ jobs:
             helm upgrade \
               --set payment_bb_emulator.container.image="463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_EMULATOR_NAME}" \
               --set payment_bb_emulator.container.imageTag=${IMAGE_VERSION} \
+              --set payment_bb_emulator.dbPersist.flushStorageOnInit=<< pipeline.parameters.emulator-db-flush >> \
               payment-bb-emulator ./helm --install --create-namespace --namespace ${EMULATOR_NAMESPACE}
       - run:
           name: Validate deployments
@@ -286,6 +287,9 @@ parameters:
     type: boolean
     default: false
   emulator_build_deploy_allowed:
+    type: boolean
+    default: false
+  emulator-db-flush:
     type: boolean
     default: false      
 

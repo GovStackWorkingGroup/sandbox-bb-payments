@@ -21,5 +21,6 @@ To run follow those steps:
 2. select branch from the dropdown
 3. select "Trigger pipeline" action
 4. Add parameter of type "Boolean", named "emulator_build_deploy_allowed" and set value to "true"
-5. Then trigger the pipeline
-6. Approve the first CI Job
+5. (Optional) If needed to install the emulator in development mode (on restart to reinit the database in initial state) add parameter of type "Boolean", named "emulator-db-flush" and set value to "true"
+6. Then trigger the pipeline
+7. Approve the first CI Job
