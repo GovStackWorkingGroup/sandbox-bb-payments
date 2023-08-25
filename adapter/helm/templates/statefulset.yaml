@@ -20,6 +20,7 @@ spec:
           image: busybox
           command: ["sh", "-c"]
           args:
+            -
               chmod -R 777 {{ .Values.payment_bb_adapter.dbPersist.mountPath }}
               fi
           env:
