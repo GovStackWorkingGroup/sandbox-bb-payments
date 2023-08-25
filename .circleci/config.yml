@@ -335,7 +335,6 @@ jobs:
             helm upgrade \
               --set payment_bb_adapter.container.image="463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_ADAPTER_NAME}" \
               --set payment_bb_adapter.container.imageTag=${IMAGE_VERSION} \
-              --set payment_bb_adapter.dbPersist.flushStorageOnInit=<< pipeline.parameters.adapter-db-flush >> \
               payment-bb-adapter ./helm --install --create-namespace --namespace ${ADAPTER_NAMESPACE}
       - run:
           name: Validate deployments
@@ -358,10 +357,7 @@ parameters:
     default: false
   adapter_build_deploy_allowed:
     type: boolean
-    default: false
-  adapter-db-flush:
-    type: boolean
-    default: false      
+    default: false  
 
 workflows:
   Emulator Build and Deploy:
