@@ -15,18 +15,6 @@ spec:
       labels:
         {{- toYaml .Values.payment_bb_adapter.template.labels | nindent 8 }}
     spec:
-      initContainers:
-        - name: fix-pvc-permissions
-          image: busybox
-          command: ["sh", "-c"]
-          args:
-            -
-              chmod -R 777 {{ .Values.payment_bb_adapter.dbPersist.mountPath }}
-              fi
-          env:
-          volumeMounts:
-            - name: {{ .Values.payment_bb_adapter.dbPersist.volumeMountName }}
-              mountPath: {{ .Values.payment_bb_adapter.dbPersist.mountPath }}
       containers:
         - name: {{ .Values.payment_bb_adapter.container.name }}
           image: "{{ .Values.payment_bb_adapter.container.image }}:{{ .Values.payment_bb_adapter.container.imageTag }}"
@@ -45,11 +33,6 @@ spec:
           env:
             - name: ACTIVE_PROFILES
               value: {{ .Values.payment_bb_adapter.profiles }}
-            - name: DATABASE_PERSIST_PATH
-              value: {{ .Values.payment_bb_adapter.dbPersist.path }}
-          volumeMounts:
-            - name: {{ .Values.payment_bb_adapter.dbPersist.volumeMountName }}
-              mountPath: {{ .Values.payment_bb_adapter.dbPersist.mountPath }}
           resources:
             limits:
               cpu: "1"
@@ -57,15 +40,6 @@ spec:
             requests:
               cpu: "200m"
               memory: 512Mi
-  volumeClaimTemplates:
-    - metadata:
-          name: {{ .Values.payment_bb_adapter.dbPersist.volumeMountName }}
-      spec:
-          accessModes:
-              - ReadWriteOnce
-          resources:
-              requests:
-                  storage: {{ .Values.payment_bb_adapter.dbPersist.storage }}
 ---
 apiVersion: v1
 kind: Service

@@ -12,12 +12,6 @@ payment_bb_adapter:
     imageTag: 0.0.1
     imagePullPolicy: "Always"
   profiles: "container"
-  dbPersist:
-    volumeMountName: "payment-bb-adapter-pvc"
-    path: "./dbdata/paymentbb"
-    mountPath: "/workspace/dbdata"
-    storage: 1Gi
-    flushStorageOnInit: false
   service:
     name: "payment-bb-adapter"
     type: ClusterIP
