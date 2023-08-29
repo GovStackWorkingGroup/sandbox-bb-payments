@@ -1,4 +1,4 @@
-package global.govstack.payment.bb.adapter.controller;
+package global.govstack.payment.bb.adapter.api;
 
 import jakarta.xml.bind.annotation.XmlTransient;
 

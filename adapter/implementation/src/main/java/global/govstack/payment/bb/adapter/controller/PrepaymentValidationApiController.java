@@ -1,12 +1,11 @@
 package global.govstack.payment.bb.adapter.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import global.govstack.payment.bb.adapter.api.PrepaymentValidationApi;
 import global.govstack.payment.bb.adapter.dto.PaymentResponseDTO;
 import global.govstack.payment.bb.adapter.dto.PrepaymentvalidationBody;
 import global.govstack.payment.bb.adapter.service.CreditInstructionService;
 import io.swagger.annotations.ApiParam;
 import jakarta.annotation.Generated;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,18 +19,8 @@ public class PrepaymentValidationApiController implements PrepaymentValidationAp
 
     private static final Logger log = LoggerFactory.getLogger(PrepaymentValidationApiController.class);
 
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
-
     @Autowired
     private CreditInstructionService creditInstructionService;
-
-    @Autowired
-    public PrepaymentValidationApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
-    }
 
     public PaymentResponseDTO prepaymentValidationPost(@ApiParam(value = "", required=true ) @Valid @RequestBody PrepaymentvalidationBody body) {
         return creditInstructionService.prepaymentValidation(body);

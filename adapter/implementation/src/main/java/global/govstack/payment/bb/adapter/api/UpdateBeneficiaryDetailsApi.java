@@ -3,11 +3,11 @@
  * https://github.com/swagger-api/swagger-codegen
  * Do not edit the class manually.
  */
-package global.govstack.payment.bb.adapter.controller;
+package global.govstack.payment.bb.adapter.api;
 
 import global.govstack.payment.bb.adapter.dto.InlineResponse200;
 import global.govstack.payment.bb.adapter.dto.PaymentResponseDTO;
-import global.govstack.payment.bb.adapter.dto.RegisterbeneficiaryBody;
+import global.govstack.payment.bb.adapter.dto.UpdatebeneficiarydetailsBody;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,18 +18,18 @@ import jakarta.validation.Valid;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
 @Validated
-@Api(value = "register-beneficiary", description = "the register-beneficiary API")
-public interface RegisterBeneficiaryApi {
+@Api(value = "update-beneficiary-details", description = "the update-beneficiary-details API")
+public interface UpdateBeneficiaryDetailsApi {
 
-    @ApiOperation(value = "Register a beneficiary", nickname = "registerBeneficiaryPost", notes = "", response = PaymentResponseDTO.class, tags={  })
+    @ApiOperation(value = "Update beneficiary details", nickname = "updateBeneficiaryDetailsPost", notes = "", response = PaymentResponseDTO.class, tags={  })
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful response", response = PaymentResponseDTO.class),
         @ApiResponse(code = 400, message = "Bad request", response = PaymentResponseDTO.class) })
-    @RequestMapping(value = "/register-beneficiary",
+    @RequestMapping(value = "/update-beneficiary-details",
         produces = { "application/json" },
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    PaymentResponseDTO registerBeneficiaryPost(@ApiParam(value = "", required=true ) @Valid @RequestBody RegisterbeneficiaryBody body);
+    PaymentResponseDTO updateBeneficiaryDetailsPost(@ApiParam(value = "", required=true ) @Valid @RequestBody UpdatebeneficiarydetailsBody body);
 
 }
 

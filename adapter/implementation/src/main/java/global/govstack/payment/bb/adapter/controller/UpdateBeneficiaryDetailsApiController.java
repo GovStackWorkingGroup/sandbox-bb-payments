@@ -1,11 +1,10 @@
 package global.govstack.payment.bb.adapter.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import global.govstack.payment.bb.adapter.api.UpdateBeneficiaryDetailsApi;
 import global.govstack.payment.bb.adapter.dto.PaymentResponseDTO;
 import global.govstack.payment.bb.adapter.dto.UpdatebeneficiarydetailsBody;
 import global.govstack.payment.bb.adapter.service.BeneficiaryService;
 import io.swagger.annotations.ApiParam;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,18 +19,8 @@ public class UpdateBeneficiaryDetailsApiController implements UpdateBeneficiaryD
 
     private static final Logger log = LoggerFactory.getLogger(UpdateBeneficiaryDetailsApiController.class);
 
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
-
     @Autowired
     private BeneficiaryService registerBeneficiaryService;
-
-    @org.springframework.beans.factory.annotation.Autowired
-    public UpdateBeneficiaryDetailsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
-    }
 
     @GetMapping("/adapter-health")
     public String getHealth() {
