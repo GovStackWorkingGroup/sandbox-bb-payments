@@ -1,4 +1,4 @@
-package global.govstack.payment.bb.adapter.api;
+package global.govstack.payment.bb.adapter.controller;
 
 import global.govstack.payment.bb.adapter.dto.InlineResponse200;
 import global.govstack.payment.bb.adapter.service.exception.ServiceException;

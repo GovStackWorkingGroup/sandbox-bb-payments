@@ -12,32 +12,29 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class BeneficiaryService {
-    private final HttpHeaders httpHeaders;
     private final PaymentBBInformationMediatorProperties paymentBBInformationMediatorProperties;
     private final RestTemplate restTemplate;
 
     public BeneficiaryService(PaymentBBInformationMediatorProperties paymentBBInformationMediatorProperties) {
         this.paymentBBInformationMediatorProperties = paymentBBInformationMediatorProperties;
         this.restTemplate = new RestTemplateBuilder()
-                .rootUri(paymentBBInformationMediatorProperties.baseUrl()).build();
-        httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.add("X-Road-Client", paymentBBInformationMediatorProperties.header());
+                .rootUri(paymentBBInformationMediatorProperties.baseUrl())
+                .defaultHeader("X-Road-Client", paymentBBInformationMediatorProperties.header())
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
     }
 
     public String health() {
-        return restTemplate.exchange(
-                paymentBBInformationMediatorProperties.baseUrl() + "/actuator/health",
+        return restTemplate.exchange("/actuator/health",
                 HttpMethod.GET,
-                new HttpEntity<>(null, httpHeaders),
+                null,
                 String.class).getBody();
     }
 
     public PaymentResponseDTO register(RegisterbeneficiaryBody body) {
         try {
-            return restTemplate.postForObject(
-                    paymentBBInformationMediatorProperties.baseUrl() + paymentBBInformationMediatorProperties.registerBeneficiary(),
-                    new HttpEntity<>(body, httpHeaders),
+            return restTemplate.postForObject(paymentBBInformationMediatorProperties.registerBeneficiary(),
+                    new HttpEntity<>(body),
                     PaymentResponseDTO.class);
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,ex.getMessage());
@@ -46,9 +43,8 @@ public class BeneficiaryService {
 
     public PaymentResponseDTO update(UpdatebeneficiarydetailsBody body) {
         try {
-        return restTemplate.postForObject(
-                paymentBBInformationMediatorProperties.baseUrl() + paymentBBInformationMediatorProperties.updateBeneficiary(),
-                new HttpEntity<>(body, httpHeaders),
+        return restTemplate.postForObject(paymentBBInformationMediatorProperties.updateBeneficiary(),
+                new HttpEntity<>(body),
                 PaymentResponseDTO.class);
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,ex.getMessage());
