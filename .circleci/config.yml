@@ -278,6 +278,69 @@ jobs:
           command: |
             echo "Validate statefulsets"
             kubectl rollout status --watch --timeout=60s statefulset/payment-bb-emulator -n ${EMULATOR_NAMESPACE} 
+  create-adapter-image:
+    docker:
+      - image: cimg/openjdk:17.0.7
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+      - run:
+          name: Set environment variables
+          command: |
+            echo 'export IMAGE_VERSION=$(cat ./adapter/implementation/build.gradle | grep "version =" | sed "s/version = '\''\([^'\'']*\)'\''/\1/")' >> $BASH_ENV
+            echo 'export ECR_REGISTRY=${ECR_ADAPTER_NAME}' >> $BASH_ENV
+            echo 'export DOCKER_IMAGE=${ECR_REGISTRY}:${IMAGE_VERSION}' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: Build Docker image
+          command: |
+            cd ./adapter/implementation
+            ./gradlew bootBuildImage --imageName=${DOCKER_IMAGE}
+      - aws-cli/setup:
+          role-arn: 'arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}'
+          aws-region: AWS_DEFAULT_REGION
+          profile-name: ${AWS_CICD_ROLE}
+          role-session-name: CircleSession
+          session-duration: '1800'
+      - run:
+          name: Docker login
+          command: |
+            aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin 463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+            docker tag ${DOCKER_IMAGE} 463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${DOCKER_IMAGE}
+            docker push 463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${DOCKER_IMAGE}
+  deploy-adapter:
+    docker:
+      - image: cimg/aws:2023.06
+    steps:
+      - checkout
+      - aws-cli/setup:
+          role-arn: 'arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}'
+          aws-region: AWS_DEFAULT_REGION
+          profile-name: ${AWS_CICD_ROLE}
+          role-session-name: CircleSession
+          session-duration: '1800'
+      - aws-eks/update-kubeconfig-with-authenticator:
+          aws-region: "${AWS_DEFAULT_REGION}"
+          cluster-name: "${AWS_CLUSTER_NAME}"
+          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}
+      - helm/install-helm-client:
+          version: v3.2.0
+      - run:
+          name: Install chart
+          command: |
+            cd ./adapter
+            IMAGE_VERSION=$(cat ./implementation/build.gradle | grep "version =" | sed "s/^.*'\(.*\)'.*$/\1/")
+            echo ${IMAGE_VERSION}
+            helm upgrade \
+              --set payment_bb_adapter.container.image="463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_ADAPTER_NAME}" \
+              --set payment_bb_adapter.container.imageTag=${IMAGE_VERSION} \
+              payment-bb-adapter ./helm --install --create-namespace --namespace ${ADAPTER_NAMESPACE}
+      - run:
+          name: Validate deployments
+          command: |
+            echo "Validate statefulsets"
+            kubectl rollout status --watch --timeout=60s statefulset/payment-bb-adapter -n ${ADAPTER_NAMESPACE} 
 
 parameters:
   deploy_allowed:
@@ -291,7 +354,10 @@ parameters:
     default: false
   emulator-db-flush:
     type: boolean
-    default: false      
+    default: false
+  adapter_build_deploy_allowed:
+    type: boolean
+    default: false  
 
 workflows:
   Emulator Build and Deploy:
@@ -307,6 +373,19 @@ workflows:
           context: aws
           requires:
             - create-emulator-image
+  Adapter Build and Deploy:
+    when: << pipeline.parameters.adapter_build_deploy_allowed >>
+    jobs:
+      - hold:
+          type: approval
+      - create-adapter-image:
+          context: aws
+          requires:
+            - hold
+      - deploy-adapter:
+          context: aws
+          requires:
+            - create-adapter-image
   Test Deployment PaymentHub and Fineract:
     when: << pipeline.parameters.test_allowed >>
     jobs:
