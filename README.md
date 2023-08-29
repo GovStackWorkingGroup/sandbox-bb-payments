@@ -3,6 +3,9 @@
 ## Specification
 [Payment Building Block Specification](https://github.com/GovStackWorkingGroup/bb-payments)
 
+## Payment BB Adapter
+[Documentation](./adapter/docs/1-main.md)
+
 ## Emulator
 [Documentation](./emulator/docs/1-main.md)
 
