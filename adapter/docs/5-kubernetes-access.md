@@ -19,12 +19,6 @@ http://localhost:{port-from-port-forward}/v3/api-docs
 http://localhost:{port-from-port-forward}/v3/api-docs.yaml
 ```
 
-## H2 Console for DB ui:
-```
-http://localhost:{port-from-port-forward}/h2-console
-```
-
-
 ## Health Check URL-s:
 ```
 http://localhost:{port-from-port-forward}/actuator/health
