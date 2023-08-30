@@ -1,19 +1,17 @@
 package global.govstack.payment.bb.adapter.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
 import jakarta.validation.constraints.*;
+import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
 
-/**
- * BulkpaymentCreditInstructions
- */
+/** BulkpaymentCreditInstructions */
 @Validated
-@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
-
-
-public class BulkpaymentCreditInstructions   {
+@jakarta.annotation.Generated(
+    value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
+    date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
+public class BulkpaymentCreditInstructions {
   @JsonProperty("InstructionID")
   private String instructionID = null;
 
@@ -36,11 +34,12 @@ public class BulkpaymentCreditInstructions   {
 
   /**
    * Get instructionID
+   *
    * @return instructionID
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=16,max=16)   public String getInstructionID() {
+  @Size(min = 16, max = 16)
+  public String getInstructionID() {
     return instructionID;
   }
 
@@ -55,11 +54,12 @@ public class BulkpaymentCreditInstructions   {
 
   /**
    * Get payeeFunctionalID
+   *
    * @return payeeFunctionalID
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=20,max=20)   public String getPayeeFunctionalID() {
+  @Size(min = 20, max = 20)
+  public String getPayeeFunctionalID() {
     return payeeFunctionalID;
   }
 
@@ -74,11 +74,11 @@ public class BulkpaymentCreditInstructions   {
 
   /**
    * Get amount
+   *
    * @return amount
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-    public Float getAmount() {
+  public Float getAmount() {
     return amount;
   }
 
@@ -93,11 +93,12 @@ public class BulkpaymentCreditInstructions   {
 
   /**
    * Get currency
+   *
    * @return currency
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=3,max=3)   public String getCurrency() {
+  @Size(min = 3, max = 3)
+  public String getCurrency() {
     return currency;
   }
 
@@ -112,18 +113,18 @@ public class BulkpaymentCreditInstructions   {
 
   /**
    * Get narration
+   *
    * @return narration
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=1,max=50)   public String getNarration() {
+  @Size(min = 1, max = 50)
+  public String getNarration() {
     return narration;
   }
 
   public void setNarration(String narration) {
     this.narration = narration;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -134,11 +135,11 @@ public class BulkpaymentCreditInstructions   {
       return false;
     }
     BulkpaymentCreditInstructions bulkpaymentCreditInstructions = (BulkpaymentCreditInstructions) o;
-    return Objects.equals(this.instructionID, bulkpaymentCreditInstructions.instructionID) &&
-        Objects.equals(this.payeeFunctionalID, bulkpaymentCreditInstructions.payeeFunctionalID) &&
-        Objects.equals(this.amount, bulkpaymentCreditInstructions.amount) &&
-        Objects.equals(this.currency, bulkpaymentCreditInstructions.currency) &&
-        Objects.equals(this.narration, bulkpaymentCreditInstructions.narration);
+    return Objects.equals(this.instructionID, bulkpaymentCreditInstructions.instructionID)
+        && Objects.equals(this.payeeFunctionalID, bulkpaymentCreditInstructions.payeeFunctionalID)
+        && Objects.equals(this.amount, bulkpaymentCreditInstructions.amount)
+        && Objects.equals(this.currency, bulkpaymentCreditInstructions.currency)
+        && Objects.equals(this.narration, bulkpaymentCreditInstructions.narration);
   }
 
   @Override
@@ -150,7 +151,7 @@ public class BulkpaymentCreditInstructions   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class BulkpaymentCreditInstructions {\n");
-    
+
     sb.append("    instructionID: ").append(toIndentedString(instructionID)).append("\n");
     sb.append("    payeeFunctionalID: ").append(toIndentedString(payeeFunctionalID)).append("\n");
     sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
@@ -161,8 +162,7 @@ public class BulkpaymentCreditInstructions   {
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

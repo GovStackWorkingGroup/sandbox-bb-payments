@@ -1,22 +1,20 @@
 package global.govstack.payment.bb.adapter.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
 
-/**
- * RegisterbeneficiaryBody
- */
+/** RegisterbeneficiaryBody */
 @Validated
-@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
-
-
-public class RegisterbeneficiaryBody   {
+@jakarta.annotation.Generated(
+    value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
+    date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
+public class RegisterbeneficiaryBody {
   @JsonProperty("RequestID")
   private String requestID = null;
 
@@ -34,11 +32,12 @@ public class RegisterbeneficiaryBody   {
 
   /**
    * Get requestID
+   *
    * @return requestID
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=12,max=12)   public String getRequestID() {
+  @Size(min = 12, max = 12)
+  public String getRequestID() {
     return requestID;
   }
 
@@ -53,11 +52,12 @@ public class RegisterbeneficiaryBody   {
 
   /**
    * Get sourceBBID
+   *
    * @return sourceBBID
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=12,max=12)   public String getSourceBBID() {
+  @Size(min = 12, max = 12)
+  public String getSourceBBID() {
     return sourceBBID;
   }
 
@@ -65,12 +65,14 @@ public class RegisterbeneficiaryBody   {
     this.sourceBBID = sourceBBID;
   }
 
-  public RegisterbeneficiaryBody beneficiaries(List<RegisterbeneficiaryBeneficiaries> beneficiaries) {
+  public RegisterbeneficiaryBody beneficiaries(
+      List<RegisterbeneficiaryBeneficiaries> beneficiaries) {
     this.beneficiaries = beneficiaries;
     return this;
   }
 
-  public RegisterbeneficiaryBody addBeneficiariesItem(RegisterbeneficiaryBeneficiaries beneficiariesItem) {
+  public RegisterbeneficiaryBody addBeneficiariesItem(
+      RegisterbeneficiaryBeneficiaries beneficiariesItem) {
     if (this.beneficiaries == null) {
       this.beneficiaries = new ArrayList<RegisterbeneficiaryBeneficiaries>();
     }
@@ -80,18 +82,18 @@ public class RegisterbeneficiaryBody   {
 
   /**
    * Get beneficiaries
+   *
    * @return beneficiaries
-   **/
+   */
   @ApiModelProperty(value = "")
-      @Valid
-    public List<RegisterbeneficiaryBeneficiaries> getBeneficiaries() {
+  @Valid
+  public List<RegisterbeneficiaryBeneficiaries> getBeneficiaries() {
     return beneficiaries;
   }
 
   public void setBeneficiaries(List<RegisterbeneficiaryBeneficiaries> beneficiaries) {
     this.beneficiaries = beneficiaries;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -102,9 +104,9 @@ public class RegisterbeneficiaryBody   {
       return false;
     }
     RegisterbeneficiaryBody registerbeneficiaryBody = (RegisterbeneficiaryBody) o;
-    return Objects.equals(this.requestID, registerbeneficiaryBody.requestID) &&
-        Objects.equals(this.sourceBBID, registerbeneficiaryBody.sourceBBID) &&
-        Objects.equals(this.beneficiaries, registerbeneficiaryBody.beneficiaries);
+    return Objects.equals(this.requestID, registerbeneficiaryBody.requestID)
+        && Objects.equals(this.sourceBBID, registerbeneficiaryBody.sourceBBID)
+        && Objects.equals(this.beneficiaries, registerbeneficiaryBody.beneficiaries);
   }
 
   @Override
@@ -116,7 +118,7 @@ public class RegisterbeneficiaryBody   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class RegisterbeneficiaryBody {\n");
-    
+
     sb.append("    requestID: ").append(toIndentedString(requestID)).append("\n");
     sb.append("    sourceBBID: ").append(toIndentedString(sourceBBID)).append("\n");
     sb.append("    beneficiaries: ").append(toIndentedString(beneficiaries)).append("\n");
@@ -125,8 +127,7 @@ public class RegisterbeneficiaryBody   {
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

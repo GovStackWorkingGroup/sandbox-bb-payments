@@ -6,22 +6,20 @@ import global.govstack.payment.bb.adapter.dto.PaymentResponseDTO;
 import global.govstack.payment.bb.adapter.service.CreditInstructionService;
 import io.swagger.annotations.ApiParam;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class BulkPaymentApiController implements BulkPaymentApi {
 
-    private static final Logger log = LoggerFactory.getLogger(BulkPaymentApiController.class);
+  private final CreditInstructionService creditInstructionService;
 
-    @Autowired
-    private CreditInstructionService creditInstructionService;
+  public BulkPaymentApiController(CreditInstructionService creditInstructionService) {
+    this.creditInstructionService = creditInstructionService;
+  }
 
-    public PaymentResponseDTO bulkPaymentPost(@ApiParam(value = "", required=true ) @Valid @RequestBody BulkpaymentBody body) {
-        return creditInstructionService.bulkPayment(body);
-    }
-
+  public PaymentResponseDTO bulkPaymentPost(
+      @ApiParam(value = "", required = true) @Valid @RequestBody BulkpaymentBody body) {
+    return creditInstructionService.bulkPayment(body);
+  }
 }

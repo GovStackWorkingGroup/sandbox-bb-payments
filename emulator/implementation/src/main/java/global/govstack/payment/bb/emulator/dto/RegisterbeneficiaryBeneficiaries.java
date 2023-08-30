@@ -1,19 +1,17 @@
 package global.govstack.payment.bb.emulator.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
 import jakarta.validation.constraints.*;
+import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
 
-/**
- * RegisterbeneficiaryBeneficiaries
- */
+/** RegisterbeneficiaryBeneficiaries */
 @Validated
-@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
-
-
-public class RegisterbeneficiaryBeneficiaries   {
+@jakarta.annotation.Generated(
+    value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
+    date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
+public class RegisterbeneficiaryBeneficiaries {
   @JsonProperty("PayeeFunctionalID")
   private String payeeFunctionalID = null;
 
@@ -30,11 +28,12 @@ public class RegisterbeneficiaryBeneficiaries   {
 
   /**
    * Get payeeFunctionalID
+   *
    * @return payeeFunctionalID
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=20,max=20)   public String getPayeeFunctionalID() {
+  @Size(min = 20, max = 20)
+  public String getPayeeFunctionalID() {
     return payeeFunctionalID;
   }
 
@@ -49,11 +48,12 @@ public class RegisterbeneficiaryBeneficiaries   {
 
   /**
    * Get paymentModality
+   *
    * @return paymentModality
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=2,max=2)   public String getPaymentModality() {
+  @Size(min = 2, max = 2)
+  public String getPaymentModality() {
     return paymentModality;
   }
 
@@ -68,18 +68,18 @@ public class RegisterbeneficiaryBeneficiaries   {
 
   /**
    * Get financialAddress
+   *
    * @return financialAddress
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(max=30)   public String getFinancialAddress() {
+  @Size(max = 30)
+  public String getFinancialAddress() {
     return financialAddress;
   }
 
   public void setFinancialAddress(String financialAddress) {
     this.financialAddress = financialAddress;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -89,10 +89,12 @@ public class RegisterbeneficiaryBeneficiaries   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    RegisterbeneficiaryBeneficiaries registerbeneficiaryBeneficiaries = (RegisterbeneficiaryBeneficiaries) o;
-    return Objects.equals(this.payeeFunctionalID, registerbeneficiaryBeneficiaries.payeeFunctionalID) &&
-        Objects.equals(this.paymentModality, registerbeneficiaryBeneficiaries.paymentModality) &&
-        Objects.equals(this.financialAddress, registerbeneficiaryBeneficiaries.financialAddress);
+    RegisterbeneficiaryBeneficiaries registerbeneficiaryBeneficiaries =
+        (RegisterbeneficiaryBeneficiaries) o;
+    return Objects.equals(
+            this.payeeFunctionalID, registerbeneficiaryBeneficiaries.payeeFunctionalID)
+        && Objects.equals(this.paymentModality, registerbeneficiaryBeneficiaries.paymentModality)
+        && Objects.equals(this.financialAddress, registerbeneficiaryBeneficiaries.financialAddress);
   }
 
   @Override
@@ -104,7 +106,7 @@ public class RegisterbeneficiaryBeneficiaries   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class RegisterbeneficiaryBeneficiaries {\n");
-    
+
     sb.append("    payeeFunctionalID: ").append(toIndentedString(payeeFunctionalID)).append("\n");
     sb.append("    paymentModality: ").append(toIndentedString(paymentModality)).append("\n");
     sb.append("    financialAddress: ").append(toIndentedString(financialAddress)).append("\n");
@@ -113,8 +115,7 @@ public class RegisterbeneficiaryBeneficiaries   {
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

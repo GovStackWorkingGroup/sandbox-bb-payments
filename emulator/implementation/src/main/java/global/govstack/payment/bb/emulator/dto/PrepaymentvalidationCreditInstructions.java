@@ -1,19 +1,17 @@
 package global.govstack.payment.bb.emulator.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
 import jakarta.validation.constraints.*;
+import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
 
-/**
- * PrepaymentvalidationCreditInstructions
- */
+/** PrepaymentvalidationCreditInstructions */
 @Validated
-@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
-
-
-public class PrepaymentvalidationCreditInstructions   {
+@jakarta.annotation.Generated(
+    value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
+    date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
+public class PrepaymentvalidationCreditInstructions {
   @JsonProperty("InstructionID")
   private String instructionID = null;
 
@@ -36,11 +34,12 @@ public class PrepaymentvalidationCreditInstructions   {
 
   /**
    * Get instructionID
+   *
    * @return instructionID
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=16,max=16)   public String getInstructionID() {
+  @Size(min = 16, max = 16)
+  public String getInstructionID() {
     return instructionID;
   }
 
@@ -55,11 +54,12 @@ public class PrepaymentvalidationCreditInstructions   {
 
   /**
    * Get payeeFunctionalID
+   *
    * @return payeeFunctionalID
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=20,max=20)   public String getPayeeFunctionalID() {
+  @Size(min = 20, max = 20)
+  public String getPayeeFunctionalID() {
     return payeeFunctionalID;
   }
 
@@ -74,11 +74,11 @@ public class PrepaymentvalidationCreditInstructions   {
 
   /**
    * Get amount
+   *
    * @return amount
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-    public Float getAmount() {
+  public Float getAmount() {
     return amount;
   }
 
@@ -93,11 +93,12 @@ public class PrepaymentvalidationCreditInstructions   {
 
   /**
    * Get currency
+   *
    * @return currency
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=3,max=3)   public String getCurrency() {
+  @Size(min = 3, max = 3)
+  public String getCurrency() {
     return currency;
   }
 
@@ -112,18 +113,18 @@ public class PrepaymentvalidationCreditInstructions   {
 
   /**
    * Get narration
+   *
    * @return narration
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(max=50)   public String getNarration() {
+  @Size(max = 50)
+  public String getNarration() {
     return narration;
   }
 
   public void setNarration(String narration) {
     this.narration = narration;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -133,12 +134,14 @@ public class PrepaymentvalidationCreditInstructions   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    PrepaymentvalidationCreditInstructions prepaymentvalidationCreditInstructions = (PrepaymentvalidationCreditInstructions) o;
-    return Objects.equals(this.instructionID, prepaymentvalidationCreditInstructions.instructionID) &&
-        Objects.equals(this.payeeFunctionalID, prepaymentvalidationCreditInstructions.payeeFunctionalID) &&
-        Objects.equals(this.amount, prepaymentvalidationCreditInstructions.amount) &&
-        Objects.equals(this.currency, prepaymentvalidationCreditInstructions.currency) &&
-        Objects.equals(this.narration, prepaymentvalidationCreditInstructions.narration);
+    PrepaymentvalidationCreditInstructions prepaymentvalidationCreditInstructions =
+        (PrepaymentvalidationCreditInstructions) o;
+    return Objects.equals(this.instructionID, prepaymentvalidationCreditInstructions.instructionID)
+        && Objects.equals(
+            this.payeeFunctionalID, prepaymentvalidationCreditInstructions.payeeFunctionalID)
+        && Objects.equals(this.amount, prepaymentvalidationCreditInstructions.amount)
+        && Objects.equals(this.currency, prepaymentvalidationCreditInstructions.currency)
+        && Objects.equals(this.narration, prepaymentvalidationCreditInstructions.narration);
   }
 
   @Override
@@ -150,7 +153,7 @@ public class PrepaymentvalidationCreditInstructions   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PrepaymentvalidationCreditInstructions {\n");
-    
+
     sb.append("    instructionID: ").append(toIndentedString(instructionID)).append("\n");
     sb.append("    payeeFunctionalID: ").append(toIndentedString(payeeFunctionalID)).append("\n");
     sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
@@ -161,8 +164,7 @@ public class PrepaymentvalidationCreditInstructions   {
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {
