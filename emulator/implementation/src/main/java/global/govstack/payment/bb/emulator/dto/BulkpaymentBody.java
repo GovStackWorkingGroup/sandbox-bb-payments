@@ -1,22 +1,20 @@
 package global.govstack.payment.bb.emulator.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
 
-/**
- * BulkpaymentBody
- */
+/** BulkpaymentBody */
 @Validated
-@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
-
-
-public class BulkpaymentBody   {
+@jakarta.annotation.Generated(
+    value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
+    date = "2023-06-02T13:05:58.136949+03:00[Europe/Sofia]")
+public class BulkpaymentBody {
   @JsonProperty("RequestID")
   private String requestID = null;
 
@@ -37,11 +35,12 @@ public class BulkpaymentBody   {
 
   /**
    * Get requestID
+   *
    * @return requestID
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=12,max=12)   public String getRequestID() {
+  @Size(min = 12, max = 12)
+  public String getRequestID() {
     return requestID;
   }
 
@@ -56,11 +55,12 @@ public class BulkpaymentBody   {
 
   /**
    * Get sourceBBID
+   *
    * @return sourceBBID
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=12,max=12)   public String getSourceBBID() {
+  @Size(min = 12, max = 12)
+  public String getSourceBBID() {
     return sourceBBID;
   }
 
@@ -75,11 +75,12 @@ public class BulkpaymentBody   {
 
   /**
    * Get batchID
+   *
    * @return batchID
-   **/
+   */
   @ApiModelProperty(value = "")
-  
-  @Size(min=12,max=12)   public String getBatchID() {
+  @Size(min = 12, max = 12)
+  public String getBatchID() {
     return batchID;
   }
 
@@ -87,12 +88,14 @@ public class BulkpaymentBody   {
     this.batchID = batchID;
   }
 
-  public BulkpaymentBody creditInstructions(List<BulkpaymentCreditInstructions> creditInstructions) {
+  public BulkpaymentBody creditInstructions(
+      List<BulkpaymentCreditInstructions> creditInstructions) {
     this.creditInstructions = creditInstructions;
     return this;
   }
 
-  public BulkpaymentBody addCreditInstructionsItem(BulkpaymentCreditInstructions creditInstructionsItem) {
+  public BulkpaymentBody addCreditInstructionsItem(
+      BulkpaymentCreditInstructions creditInstructionsItem) {
     if (this.creditInstructions == null) {
       this.creditInstructions = new ArrayList<BulkpaymentCreditInstructions>();
     }
@@ -102,18 +105,18 @@ public class BulkpaymentBody   {
 
   /**
    * Get creditInstructions
+   *
    * @return creditInstructions
-   **/
+   */
   @ApiModelProperty(value = "")
-      @Valid
-    public List<BulkpaymentCreditInstructions> getCreditInstructions() {
+  @Valid
+  public List<BulkpaymentCreditInstructions> getCreditInstructions() {
     return creditInstructions;
   }
 
   public void setCreditInstructions(List<BulkpaymentCreditInstructions> creditInstructions) {
     this.creditInstructions = creditInstructions;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -124,10 +127,10 @@ public class BulkpaymentBody   {
       return false;
     }
     BulkpaymentBody bulkpaymentBody = (BulkpaymentBody) o;
-    return Objects.equals(this.requestID, bulkpaymentBody.requestID) &&
-        Objects.equals(this.sourceBBID, bulkpaymentBody.sourceBBID) &&
-        Objects.equals(this.batchID, bulkpaymentBody.batchID) &&
-        Objects.equals(this.creditInstructions, bulkpaymentBody.creditInstructions);
+    return Objects.equals(this.requestID, bulkpaymentBody.requestID)
+        && Objects.equals(this.sourceBBID, bulkpaymentBody.sourceBBID)
+        && Objects.equals(this.batchID, bulkpaymentBody.batchID)
+        && Objects.equals(this.creditInstructions, bulkpaymentBody.creditInstructions);
   }
 
   @Override
@@ -139,7 +142,7 @@ public class BulkpaymentBody   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class BulkpaymentBody {\n");
-    
+
     sb.append("    requestID: ").append(toIndentedString(requestID)).append("\n");
     sb.append("    sourceBBID: ").append(toIndentedString(sourceBBID)).append("\n");
     sb.append("    batchID: ").append(toIndentedString(batchID)).append("\n");
@@ -149,8 +152,7 @@ public class BulkpaymentBody   {
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

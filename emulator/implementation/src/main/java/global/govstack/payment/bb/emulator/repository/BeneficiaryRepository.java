@@ -5,6 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BeneficiaryRepository extends JpaRepository<Beneficiary, String> {
 
-    boolean existsBeneficiaryByPayeeFunctionalID(String payeeFunctionalID);
-
+  boolean existsBeneficiaryByPayeeFunctionalID(String payeeFunctionalID);
 }
