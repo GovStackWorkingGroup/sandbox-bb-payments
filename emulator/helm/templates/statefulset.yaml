@@ -57,11 +57,11 @@ spec:
               mountPath: {{ .Values.payment_bb_emulator.dbPersist.mountPath }}
           resources:
             limits:
-              cpu: "1"
-              memory: 2Gi
+              cpu: "2"
+              memory: 1Gi
             requests:
               cpu: "200m"
-              memory: 512Mi
+              memory: 1Gi
   volumeClaimTemplates:
     - metadata:
           name: {{ .Values.payment_bb_emulator.dbPersist.volumeMountName }}
