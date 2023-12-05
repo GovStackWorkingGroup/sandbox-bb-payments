@@ -1,9 +1,12 @@
 version: 2.1
 
 parameters:
-  namespace:
+  emulator_namespace:
     type: string
-    default: payments
+    default: payment-bb-emulator
+  adapter_namespace:
+    type: string
+    default: payment-bb-adapter
   playground:
     type: boolean
     default: false
@@ -89,7 +92,7 @@ commands:
                   DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE:latest)
                   DIGEST="${DIGEST#*@}"
                   helm upgrade --wait --install --dependency-update --create-namespace \
-                    --namespace << pipeline.parameters.namespace >> \
+                    --namespace "<< pipeline.parameters.emulator_namespace >>" \
                     --set-string "payment_bb_emulator.container.image=${IMAGE}@${DIGEST}" \
                     payment-bb-emulator ./emulator/helm
 
@@ -140,7 +143,7 @@ commands:
                   DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE:latest)
                   DIGEST="${DIGEST#*@}"
                   helm upgrade --wait --install --dependency-update --create-namespace \
-                    --namespace << pipeline.parameters.namespace >> \
+                    --namespace "<< pipeline.parameters.adapter_namespace >>" \
                     --set-string "payment_bb_adapter.container.image=${IMAGE}@${DIGEST}" \
                     payment-bb-adapter ./adapter/helm
 
