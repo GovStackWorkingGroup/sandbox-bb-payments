@@ -1,30 +1,155 @@
 version: 2.1
+
+parameters:
+  namespace:
+    type: string
+    default: payments
+  playground:
+    type: boolean
+    default: false
+  emulator_image:
+    type: string
+    default: "bb/payments/emulator"
+  adapter_image:
+    type: string
+    default: "bb/payments/adapter"
+  test_allowed:
+    type: boolean
+    default: false
+  deploy_allowed:
+    type: boolean
+    default: false
+
 orbs:
-  aws-cli: circleci/aws-cli@3.1.4
-  aws-ecr: circleci/aws-ecr@8.2.1
-  aws-eks: circleci/aws-eks@2.2.0
-  helm: circleci/helm@1.0
-  kubernetes: circleci/kubernetes@1.3.1
+  aws-cli: circleci/aws-cli@4.1.2
+  helm: circleci/helm@3.0
+
+commands:
+  aws_setup:
+    steps:
+      - aws-cli/setup:
+          role_arn: "${AWS_CIRCLECI_ROLE_ARN}"
+          region: ${AWS_REGION}
+          role_session_name: CircleCISession
+          session_duration: '1800'
+      - helm/install_helm_client:
+          version: v3.13.0
+      - run:
+          name: Update kubeconfig
+          command: |
+            aws eks update-kubeconfig --name ${EKS_CLUSTER}
+
+  build_and_deploy_emulator:
+    parameters:
+      deploy:
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - helm/install_helm_client:
+          version: v3.13.0
+      - run:
+          name: Setup env
+          command: |
+              echo "export IMAGE=${CONTAINER_REGISTRY}/<< pipeline.parameters.emulator_image >>" >> "$BASH_ENV"
+      - run:
+          name: Build docker image
+          command: |
+            cd emulator/implementation
+            ./gradlew build bootBuildImage "--imageName=$IMAGE:latest"
+      - run:
+          name: Check Helm Chart
+          command: |
+            helm lint ./emulator/helm
+      - when:
+          condition: << parameters.deploy >>
+          steps:
+            - aws-cli/setup:
+                role_arn: "${AWS_CIRCLECI_ROLE_ARN}"
+                region: ${AWS_REGION}
+                role_session_name: CircleCISession
+                session_duration: '1800'
+            - run:
+                name: Push image
+                command: |
+                  aws ecr get-login-password | docker login --username AWS --password-stdin "${CONTAINER_REGISTRY}"
+                  docker push "$IMAGE:latest"
+            - run:
+                name: Update kubeconfig
+                command: |
+                  aws eks update-kubeconfig --name ${EKS_CLUSTER}
+            - run:
+                name: Deploy project
+                command: |
+                  DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE:latest)
+                  DIGEST="${DIGEST#*@}"
+                  helm upgrade --wait --install --dependency-update --create-namespace \
+                    --namespace << pipeline.parameters.namespace >> \
+                    --set-string "payment_bb_emulator.container.image=${IMAGE}@${DIGEST}" \
+                    payment-bb-emulator ./emulator/helm
+
+  build_and_deploy_adapter:
+    parameters:
+      deploy:
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - helm/install_helm_client:
+          version: v3.13.0
+      - run:
+          name: Setup env
+          command: |
+              echo "export IMAGE=${CONTAINER_REGISTRY}/<< pipeline.parameters.adapter_image >>" >> "$BASH_ENV"
+      - run:
+          name: Build docker image
+          command: |
+            cd adapter/implementation
+            ./gradlew build bootBuildImage "--imageName=$IMAGE:latest"
+      - run:
+          name: Check Helm Chart
+          command: |
+            helm lint ./emulator/helm
+      - when:
+          condition: << parameters.deploy >>
+          steps:
+            - aws-cli/setup:
+                role_arn: "${AWS_CIRCLECI_ROLE_ARN}"
+                region: ${AWS_REGION}
+                role_session_name: CircleCISession
+                session_duration: '1800'
+            - run:
+                name: Push image
+                command: |
+                  aws ecr get-login-password | docker login --username AWS --password-stdin "${CONTAINER_REGISTRY}"
+                  docker push "$IMAGE:latest"
+            - run:
+                name: Update kubeconfig
+                command: |
+                  aws eks update-kubeconfig --name ${EKS_CLUSTER}
+            - run:
+                name: Deploy project
+                command: |
+                  DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE:latest)
+                  DIGEST="${DIGEST#*@}"
+                  helm upgrade --wait --install --dependency-update --create-namespace \
+                    --namespace << pipeline.parameters.namespace >> \
+                    --set-string "payment_bb_adapter.container.image=${IMAGE}@${DIGEST}" \
+                    payment-bb-adapter ./adapter/helm
+
 jobs:
   deploy-payment-hub-and-fineract:
     docker:
-      - image: cimg/aws:2023.03
+      - image: cimg/aws:2023.09
     steps:
       - checkout
       - setup_remote_docker:
           version: 20.10.14
-      - aws-cli/setup:
-          role-arn: 'arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev'
-          aws-region: AWS_DEFAULT_REGION
-          profile-name: CICDPipeline_sandbox-bb-payments_Role_dev
-          role-session-name: CircleSession
-          session-duration: '1800'
-      - aws-eks/update-kubeconfig-with-authenticator:
-          aws-region: "${AWS_DEFAULT_REGION}"
-          cluster-name: "${AWS_CLUSTER_NAME}"
-          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev
-      - helm/install-helm-client:
-          version: v3.2.0
+      - aws_setup
       - run:
           name: Create Elasticsearch Certificates
           command: |
@@ -41,7 +166,7 @@ jobs:
             kubectl delete secrets elastic-certificates elastic-certificate-pem elastic-certificate-crt -n ${CHART_NAMESPACE} || true
             kubectl create secret generic elastic-certificates --from-file=elastic-certificates.p12 -n ${CHART_NAMESPACE}
             kubectl create secret generic elastic-certificate-pem --from-file=elastic-certificate.pem -n ${CHART_NAMESPACE}
-            kubectl create secret generic elastic-certificate-crt --from-file=elastic-certificate.crt -n ${CHART_NAMESPACE}   
+            kubectl create secret generic elastic-certificate-crt --from-file=elastic-certificate.crt -n ${CHART_NAMESPACE}
             docker rm -f elastic-helm-charts-certs
             rm -f elastic-certificates.p12 elastic-certificate.pem elastic-certificate.crt elastic-stack-ca.p12
       - run:
@@ -55,7 +180,7 @@ jobs:
             REPLICAS=$(kubectl describe deployments ph-ee-operations-app -n ${CHART_NAMESPACE} | grep desired | awk '{print $2}')
             kubectl scale deployment ph-ee-operations-app --replicas=0 -n ${CHART_NAMESPACE}
             root_pass=$(kubectl get secret operationsmysql -o jsonpath='{.data.mysql-root-password}' -n ${CHART_NAMESPACE} | base64 --decode)
-            kubectl rollout status --watch --timeout=180s statefulset/operationsmysql -n ${CHART_NAMESPACE} 
+            kubectl rollout status --watch --timeout=180s statefulset/operationsmysql -n ${CHART_NAMESPACE}
             sleep 60
             fix_ops_db() {
               kubectl scale deployment ph-ee-operations-app --replicas=0 -n ${CHART_NAMESPACE}
@@ -78,7 +203,7 @@ jobs:
             kubectl delete pods -n ${CHART_NAMESPACE} $(kubectl get pods -n ${CHART_NAMESPACE} | grep fineract-server | awk '{print $1}')
             echo "Sleep after pod restart"
             sleep 180
-      - run: 
+      - run:
           name: Deploy BPMNs
           command: |
             kubectl wait deployment -n ${CHART_NAMESPACE} ph-ee-zeebe-ops --for condition=Available=True --timeout=90s
@@ -88,27 +213,19 @@ jobs:
               curl --location 'http://127.0.0.1:15200/zeebe/upload' --form "file=@$bpmn"
             done
             pkill kubectl
+
   test-deployed-payment-hub-and-fineract:
     docker:
-      - image: cimg/aws:2023.03
+      - image: cimg/aws:2023.09
     steps:
       - checkout
-      - aws-cli/setup:
-          role-arn: 'arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev'
-          aws-region: AWS_DEFAULT_REGION
-          profile-name: CICDPipeline_sandbox-bb-payments_Role_dev
-          role-session-name: CircleSession
-          session-duration: '1800'
-      - aws-eks/update-kubeconfig-with-authenticator:
-          aws-region: "${AWS_DEFAULT_REGION}"
-          cluster-name: "${AWS_CLUSTER_NAME}"
-          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/CICDPipeline_sandbox-bb-payments_Role_dev
+      - aws_setup
       - run:
           name: Validate deployments
           command: |
             echo "Validate deployments"
             kubectl rollout status --watch --timeout=60s deployment/fineract-server -n ${CHART_NAMESPACE}
-            kubectl rollout status --watch --timeout=60s deployment/kafka -n ${CHART_NAMESPACE}           
+            kubectl rollout status --watch --timeout=60s deployment/kafka -n ${CHART_NAMESPACE}
             kubectl rollout status --watch --timeout=60s deployment/message-gateway -n ${CHART_NAMESPACE}
             kubectl rollout status --watch --timeout=60s deployment/mifos-community -n ${CHART_NAMESPACE}
             kubectl rollout status --watch --timeout=60s deployment/ph-ee-connector-ams-mifos -n ${CHART_NAMESPACE}
@@ -118,7 +235,7 @@ jobs:
             kubectl rollout status --watch --timeout=60s deployment/ph-ee-importer-es -n ${CHART_NAMESPACE}
             kubectl rollout status --watch --timeout=60s deployment/ph-ee-importer-rdbms -n ${CHART_NAMESPACE}
             kubectl rollout status --watch --timeout=60s deployment/ph-ee-kibana -n ${CHART_NAMESPACE}
-            kubectl rollout status --watch --timeout=60s deployment/ph-ee-operations-app -n ${CHART_NAMESPACE}     
+            kubectl rollout status --watch --timeout=60s deployment/ph-ee-operations-app -n ${CHART_NAMESPACE}
             kubectl rollout status --watch --timeout=60s deployment/ph-ee-operations-web -n ${CHART_NAMESPACE}
             kubectl rollout status --watch --timeout=60s deployment/ph-ee-zeebe-ops -n ${CHART_NAMESPACE}
             kubectl rollout status --watch --timeout=60s deployment/zeebe-operate -n ${CHART_NAMESPACE}
@@ -214,198 +331,92 @@ jobs:
               exit 1
             fi
             pkill kubectl
-  create-emulator-image:
-    docker:
-      - image: cimg/openjdk:17.0.7
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.14
-      - run:
-          name: Set environment variables
-          command: |
-            echo 'export IMAGE_VERSION=$(cat ./emulator/implementation/build.gradle | grep "version =" | sed "s/version = '\''\([^'\'']*\)'\''/\1/")' >> $BASH_ENV
-            echo 'export ECR_REGISTRY=${ECR_EMULATOR_NAME}' >> $BASH_ENV
-            echo 'export DOCKER_IMAGE=${ECR_REGISTRY}:${IMAGE_VERSION}' >> $BASH_ENV
-            source $BASH_ENV
-      - run:
-          name: Build Docker image
-          command: |
-            cd ./emulator/implementation
-            ./gradlew bootBuildImage --imageName=${DOCKER_IMAGE}
-      - aws-cli/setup:
-          role-arn: 'arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}'
-          aws-region: AWS_DEFAULT_REGION
-          profile-name: ${AWS_CICD_ROLE}
-          role-session-name: CircleSession
-          session-duration: '1800'
-      - run:
-          name: Docker login
-          command: |
-            aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin 463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
-            docker tag ${DOCKER_IMAGE} 463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${DOCKER_IMAGE}
-            docker push 463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${DOCKER_IMAGE}
-  deploy-emulator:
-    docker:
-      - image: cimg/aws:2023.06
-    steps:
-      - checkout
-      - aws-cli/setup:
-          role-arn: 'arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}'
-          aws-region: AWS_DEFAULT_REGION
-          profile-name: ${AWS_CICD_ROLE}
-          role-session-name: CircleSession
-          session-duration: '1800'
-      - aws-eks/update-kubeconfig-with-authenticator:
-          aws-region: "${AWS_DEFAULT_REGION}"
-          cluster-name: "${AWS_CLUSTER_NAME}"
-          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}
-      - helm/install-helm-client:
-          version: v3.2.0
-      - run:
-          name: Install chart
-          command: |
-            cd ./emulator
-            IMAGE_VERSION=$(cat ./implementation/build.gradle | grep "version =" | sed "s/^.*'\(.*\)'.*$/\1/")
-            echo ${IMAGE_VERSION}
-            helm upgrade \
-              --set payment_bb_emulator.container.image="463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_EMULATOR_NAME}" \
-              --set payment_bb_emulator.container.imageTag=${IMAGE_VERSION} \
-              --set payment_bb_emulator.dbPersist.flushStorageOnInit=<< pipeline.parameters.emulator-db-flush >> \
-              payment-bb-emulator ./helm --install --create-namespace --namespace ${EMULATOR_NAMESPACE}
-      - run:
-          name: Validate deployments
-          command: |
-            echo "Validate statefulsets"
-            kubectl rollout status --watch --timeout=60s statefulset/payment-bb-emulator -n ${EMULATOR_NAMESPACE} 
-  create-adapter-image:
-    docker:
-      - image: cimg/openjdk:17.0.7
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.14
-      - run:
-          name: Set environment variables
-          command: |
-            echo 'export IMAGE_VERSION=$(cat ./adapter/implementation/build.gradle | grep "version =" | sed "s/version = '\''\([^'\'']*\)'\''/\1/")' >> $BASH_ENV
-            echo 'export ECR_REGISTRY=${ECR_ADAPTER_NAME}' >> $BASH_ENV
-            echo 'export DOCKER_IMAGE=${ECR_REGISTRY}:${IMAGE_VERSION}' >> $BASH_ENV
-            source $BASH_ENV
-      - run:
-          name: Build Docker image
-          command: |
-            cd ./adapter/implementation
-            ./gradlew bootBuildImage --imageName=${DOCKER_IMAGE}
-      - aws-cli/setup:
-          role-arn: 'arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}'
-          aws-region: AWS_DEFAULT_REGION
-          profile-name: ${AWS_CICD_ROLE}
-          role-session-name: CircleSession
-          session-duration: '1800'
-      - run:
-          name: Docker login
-          command: |
-            aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin 463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
-            docker tag ${DOCKER_IMAGE} 463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${DOCKER_IMAGE}
-            docker push 463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${DOCKER_IMAGE}
-  deploy-adapter:
-    docker:
-      - image: cimg/aws:2023.06
-    steps:
-      - checkout
-      - aws-cli/setup:
-          role-arn: 'arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}'
-          aws-region: AWS_DEFAULT_REGION
-          profile-name: ${AWS_CICD_ROLE}
-          role-session-name: CircleSession
-          session-duration: '1800'
-      - aws-eks/update-kubeconfig-with-authenticator:
-          aws-region: "${AWS_DEFAULT_REGION}"
-          cluster-name: "${AWS_CLUSTER_NAME}"
-          cluster-authentication-role-arn: arn:aws:iam::463471358064:role/${AWS_CICD_ROLE}
-      - helm/install-helm-client:
-          version: v3.2.0
-      - run:
-          name: Install chart
-          command: |
-            cd ./adapter
-            IMAGE_VERSION=$(cat ./implementation/build.gradle | grep "version =" | sed "s/^.*'\(.*\)'.*$/\1/")
-            echo ${IMAGE_VERSION}
-            helm upgrade \
-              --set payment_bb_adapter.container.image="463471358064.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_ADAPTER_NAME}" \
-              --set payment_bb_adapter.container.imageTag=${IMAGE_VERSION} \
-              payment-bb-adapter ./helm --install --create-namespace --namespace ${ADAPTER_NAMESPACE}
-      - run:
-          name: Validate deployments
-          command: |
-            echo "Validate statefulsets"
-            kubectl rollout status --watch --timeout=60s statefulset/payment-bb-adapter -n ${ADAPTER_NAMESPACE} 
 
-parameters:
-  deploy_allowed:
-    type: boolean
-    default: false
-  test_allowed:
-    type: boolean
-    default: false
-  emulator_build_deploy_allowed:
-    type: boolean
-    default: false
-  emulator-db-flush:
-    type: boolean
-    default: false
-  adapter_build_deploy_allowed:
-    type: boolean
-    default: false  
+  build-emulator:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - build_and_deploy_emulator:
+          deploy: false
+
+  build-and-deploy-emulator:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - build_and_deploy_emulator:
+          deploy: true
+
+  build-adapter:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - build_and_deploy_adapter:
+          deploy: false
+
+  build-and-deploy-adapter:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - build_and_deploy_adapter:
+          deploy: true
 
 workflows:
-  Emulator Build and Deploy:
-    when: << pipeline.parameters.emulator_build_deploy_allowed >>
+  "Just build":
+    when:
+      and:
+        - equal: [ false, << pipeline.parameters.playground >> ]
+        - not:
+            equal: [ 'main', << pipeline.git.branch >> ]
     jobs:
-      - hold:
-          type: approval
-      - create-emulator-image:
-          context: aws
-          requires:
-            - hold
-      - deploy-emulator:
-          context: aws
-          requires:
-            - create-emulator-image
-  Adapter Build and Deploy:
-    when: << pipeline.parameters.adapter_build_deploy_allowed >>
+      - build-emulator:
+          context: sandbox-dev
+      - build-adapter:
+          context: sandbox-dev
+
+  # build and deploy to dev commits to main
+  "Build and deploy to dev":
+    when:
+      and:
+        - equal: [ false, << pipeline.parameters.playground >> ]
+        - equal: [ 'main', << pipeline.git.branch >> ]
     jobs:
-      - hold:
-          type: approval
-      - create-adapter-image:
-          context: aws
-          requires:
-            - hold
-      - deploy-adapter:
-          context: aws
-          requires:
-            - create-adapter-image
-  Test Deployment PaymentHub and Fineract:
+      - build-and-deploy-emulator:
+          context: sandbox-dev
+      - build-and-deploy-adapter:
+          context: sandbox-dev
+
+  # build and deploy to playground depending on parameter
+  "Build and deploy to playground":
+    when:
+      and:
+        - equal: [ true, << pipeline.parameters.playground >> ]
+        - equal: [ 'main', << pipeline.git.branch >> ]
+    jobs:
+      - build-and-deploy-emulator:
+          context: playground
+      - build-and-deploy-adapter:
+          context: playground
+
+  "Test Deployment PaymentHub and Fineract":
     when: << pipeline.parameters.test_allowed >>
     jobs:
       - hold:
           type: approval
       - test-deployed-payment-hub-and-fineract:
-          context: aws
+          context: sandbox-dev
           requires:
             - hold
-  Deploy PaymentHub and Fineract to EKS cluster:
+
+  "Deploy PaymentHub and Fineract to EKS cluster":
     when: << pipeline.parameters.deploy_allowed >>
     jobs:
       - hold:
           type: approval
       - deploy-payment-hub-and-fineract:
-          context: aws
+          context: sandbox-dev
           requires:
             - hold
       - test-deployed-payment-hub-and-fineract:
-          context: aws
+          context: sandbox-dev
           requires:
             - deploy-payment-hub-and-fineract
-
