@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: {{ .Values.payment_bb_adapter.container.name }}
-          image: "{{ .Values.payment_bb_adapter.container.image }}:{{ .Values.payment_bb_adapter.container.imageTag }}"
+          image: "{{ .Values.payment_bb_adapter.container.image }}"
           imagePullPolicy: {{ .Values.payment_bb_adapter.container.imagePullPolicy }}
           ports:
           - containerPort: 8080
