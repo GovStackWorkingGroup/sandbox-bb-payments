@@ -25,6 +25,9 @@ parameters:
   force_deploy:
     type: boolean
     default: false
+  emulator-db-flush:
+    type: boolean
+    default: false
 
 orbs:
   aws-cli: circleci/aws-cli@4.1.2
@@ -93,6 +96,7 @@ commands:
                   DIGEST="${DIGEST#*@}"
                   helm upgrade --wait --install --dependency-update --create-namespace \
                     --namespace "<< pipeline.parameters.emulator_namespace >>" \
+                    --set-string payment_bb_emulator.dbPersist.flushStorageOnInit=<< pipeline.parameters.emulator-db-flush >> \
                     --set-string "payment_bb_emulator.container.image=${IMAGE}@${DIGEST}" \
                     payment-bb-emulator ./emulator/helm
 
