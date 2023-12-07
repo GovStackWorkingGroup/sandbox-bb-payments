@@ -16,3 +16,6 @@ payment_bb_adapter:
     type: ClusterIP
     port: 8080
     targetPort: 8080
+  emulator:
+    url: "http://sandbox-xroad-ss2.sandbox-im.svc.cluster.local:8080/r1/SANDBOX/GOV/PROVIDER/PAYMENT/api"
+    header: "SANDBOX/ORG/CLIENT/TEST"

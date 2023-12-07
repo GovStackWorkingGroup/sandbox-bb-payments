@@ -33,6 +33,10 @@ spec:
           env:
             - name: ACTIVE_PROFILES
               value: {{ .Values.payment_bb_adapter.profiles }}
+            - name: PAYMENT_IM_HEADER
+              value: {{ .Values.payment_bb_adapter.emulator.header }}
+            - name: PAYMENT_IM_BASE_URL
+              value: {{ .Values.payment_bb_adapter.emulator.url }}
           resources:
             limits:
               cpu: "2"
