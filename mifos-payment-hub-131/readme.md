@@ -1,19 +1,14 @@
-# Notes
+# Installation
 
-kubectl delete clusterroles `kubectl get clusterroles |grep c-role|cut -d ' ' -f1` || echo ' '
-kubectl delete clusterrolebinding `kubectl get clusterrolebinding |grep c-role|cut -d ' ' -f1` || echo ' '
-kubectl delete namespace paymenthub-sandbox || echo ' '
-kubectl create namespace paymenthub-sandbox || echo ' '
+1. kubectl delete clusterroles `kubectl get clusterroles |grep c-role|cut -d ' ' -f1` || echo ' '
+2. kubectl delete clusterrolebinding `kubectl get clusterrolebinding |grep c-role|cut -d ' ' -f1` || echo ' '
+3. kubectl delete namespace paymenthub-sandbox || echo ' '
+4. kubectl create namespace paymenthub-sandbox || echo ' '
 
-helm repo update
+5. helm repo update
 
-helm dependency build
-
-helm install my-ph-ee-g2psandbox  ./helm/ -n paymenthub-sandbox --create-namespace
-
-
-
-helm upgrade --install my-ph-ee-g2psandbox  ./helm/ -n paymenthub-sandbox --create-namespace
+6. helm dependency build
+7. helm upgrade --install my-ph-ee-g2psandbox  ./helm/ -n paymenthub-sandbox --create-namespace
 
 
 ## Fix Known Issue
