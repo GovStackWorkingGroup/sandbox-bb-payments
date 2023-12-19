@@ -28,6 +28,12 @@ parameters:
   emulator-db-flush:
     type: boolean
     default: false
+  emulator_url:
+    type: string
+    default: "http://sandbox-xroad-ss2.sandbox-im.svc.cluster.local:8080/r1/SANDBOX/GOV/PROVIDER/PAYMENT/api"
+  emulator_header:
+    type: string
+    default: "SANDBOX/ORG/CLIENT/TEST"
 
 orbs:
   aws-cli: circleci/aws-cli@4.1.2
@@ -149,6 +155,8 @@ commands:
                   helm upgrade --wait --install --dependency-update --create-namespace \
                     --namespace "<< pipeline.parameters.adapter_namespace >>" \
                     --set-string "payment_bb_adapter.container.image=${IMAGE}@${DIGEST}" \
+                    --set-string "payment_bb_adapter.emulator.url=<< pipeline.parameters.emulator_url >>" \
+                    --set-string "payment_bb_adapter.emulator.header=<< pipeline.parameters.emulator_header >>" \
                     payment-bb-adapter ./adapter/helm
 
 jobs:
